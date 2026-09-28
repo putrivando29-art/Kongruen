@@ -1,0 +1,22 @@
+# Konfigurasi Netlify untuk GeoMatch (situs statis, tanpa proses build)
+[build]
+  publish = "."
+  command = ""
+
+# Semua rute memakai hash (#/materi, #/misi, ...), tetapi pengalihan ini
+# menjaga agar URL langsung yang tidak dikenal tetap membuka aplikasi.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

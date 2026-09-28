@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GeoMatch: Detektif Bangun Geometri</title>
+  <meta name="description" content="GeoMatch: media pembelajaran berbasis permainan untuk materi kekongruenan dan kesebangunan segitiga serta segiempat, kelas IX SMP.">
+  <meta name="theme-color" content="#17324D">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- KaTeX disimpan lokal (vendor/) agar rumus tetap tampil walau CDN diblokir -->
+  <link rel="stylesheet" href="vendor/katex/katex.min.css">
+  <script src="vendor/katex/katex.min.js"></script>
+  <script>
+    if (!window.katex) {
+      document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">');
+      document.write('<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"><\/script>');
+    }
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#app">Lewati ke konten</a>
+  <header id="navbar"></header>
+  <main id="app" tabindex="-1" aria-live="polite"></main>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <strong>GeoMatch</strong>
+        <span>Pecahkan Kasus, Temukan Hubungan Geometri!</span>
+      </div>
+      <p class="footer-note">Media belajar Kekongruenan dan Kesebangunan Segitiga serta Segiempat untuk kelas IX SMP. Progres disimpan di perangkatmu (localStorage).</p>
+    </div>
+  </footer>
+  <div id="toast-root" aria-live="assertive"></div>
+
+  <!-- Inti -->
+  <script src="js/core/ui.js"></script>
+  <script src="js/core/store.js"></script>
+  <script src="js/core/geo.js"></script>
+  <script src="js/core/svg.js"></script>
+  <!-- Data -->
+  <script src="js/data/missions.js"></script>
+  <script src="js/data/quiz.js"></script>
+  <!-- Komponen & halaman -->
+  <script src="js/components/navbar.js"></script>
+  <script src="js/pages/home.js"></script>
+  <script src="js/pages/guide.js"></script>
+  <script src="js/pages/material.js"></script>
+  <script src="js/pages/lab.js"></script>
+  <script src="js/pages/mission.js"></script>
+  <script src="js/pages/quiz.js"></script>
+  <script src="js/pages/result.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
