@@ -41,7 +41,7 @@
           <div class="progress" style="margin:14px 0"><span style="width:${(st.completed / st.total) * 100}%"></span></div>
           <div class="btn-row" style="justify-content:center">
             <a class="btn btn-primary" href="#/misi">${GM.icon('play', 18)} Lanjutkan Investigasi</a>
-            <a class="btn btn-outline" href="#/materi/kongruensi">${GM.icon('book', 18)} Pelajari Materi</a>
+            <a class="btn btn-outline" href="#/materi/kongruen-segitiga">${GM.icon('book', 18)} Pelajari Materi</a>
           </div>
         </div>
         ${s.quiz.result ? quizBlock(s.quiz.result) : ''}
@@ -79,7 +79,7 @@
           ${GM.formula(`\\text{Persentase keberhasilan} = \\frac{\\text{Jumlah jawaban benar}}{\\text{Jumlah seluruh soal}} \\times 100\\% = \\frac{${st.correct}}{${st.total}} \\times 100\\% = ${pct}\\%`)}
           <div class="table-wrap"><table class="data compact">
             <tr><th>Kasus</th><th>Hasil percobaan pertama</th><th>Poin</th></tr>
-            ${GM.MISSIONS.map((m) => { const d = s.missions[m.id] || {}; return `<tr><td>${m.id}. ${m.title}</td><td class="${d.firstCorrect ? 'ok' : 'bad'}">${d.firstCorrect ? 'Benar' : 'Salah'}</td><td>${d.firstCorrect ? 20 : 0}</td></tr>`; }).join('')}
+            ${GM.MISSIONS.map((m) => { const d = s.missions[m.id] || {}; return `<tr><td>${m.id}. ${m.title}</td><td class="${d.firstCorrect ? 'ok' : 'bad'}">${d.firstCorrect ? 'Benar' : 'Salah'}</td><td>${d.firstCorrect ? GM.store.POINTS : 0}</td></tr>`; }).join('')}
           </table></div>
         </div>
         <div>
@@ -94,18 +94,19 @@
           <div class="card">
             <h3>${GM.icon('book', 20)} Rekomendasi materi</h3>
             ${wrongCases.length
-              ? `<p class="small muted">Berdasarkan kasus yang belum tepat pada percobaan pertama:</p><ul class="info-list">${wrongCases.map((m) => `<li><span class="dot" style="background:var(--bad)"></span><div><b>Kasus ${m.id}: ${m.title}</b><br><a href="#/materi/${m.topic.tab}">Pelajari: ${m.topic.label}</a></div></li>`).join('')}</ul>`
-              : `<p>Semua kasus terjawab benar pada percobaan pertama. Lanjutkan ke <a href="#/materi/teorema">Teorema Thales dan garis tinggi</a> atau uji dirimu di <a href="#/evaluasi">Evaluasi</a>.</p>`}
+              ? `<p class="small muted">Berdasarkan kasus yang belum tepat pada percobaan pertama:</p><ul class="info-list">${wrongCases.map((m) => `<li><span class="dot" style="background:var(--bad)"></span><div><b>Kasus ${m.id}: ${m.title}</b><br><a href="#/materi/${GM.tpOf(m.tp).tab}">Pelajari materi TP ${m.tp}</a></div></li>`).join('')}</ul>`
+              : `<p>Semua kasus terjawab benar pada percobaan pertama. Lanjutkan ke <a href="#/materi/masalah-sebangun">proyek mini pengukuran tak langsung</a> atau uji dirimu di <a href="#/evaluasi">Evaluasi</a>.</p>`}
           </div>
         </div>
       </div>
 
       ${s.quiz.result ? quizBlock(s.quiz.result) : ''}
+      ${GM.TujuanPage.reportCard()}
 
       <div class="card center" style="margin-top:18px">
         <div class="btn-row" style="justify-content:center">
           <button class="btn btn-primary btn-lg" id="r-again">${GM.icon('refresh', 18)} Ulangi Investigasi</button>
-          <a class="btn btn-outline btn-lg" href="#/materi/kongruensi">${GM.icon('book', 18)} Pelajari Materi</a>
+          <a class="btn btn-outline btn-lg" href="#/materi/kongruen-segitiga">${GM.icon('book', 18)} Pelajari Materi</a>
           <a class="btn btn-mint btn-lg" href="#/evaluasi">${GM.icon('clipboard', 18)} Kerjakan Evaluasi</a>
         </div>
       </div>

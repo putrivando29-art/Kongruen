@@ -4,6 +4,7 @@
   const ROUTES = {
     beranda: { page: () => GM.HomePage, title: 'Beranda' },
     petunjuk: { page: () => GM.GuidePage, title: 'Petunjuk Permainan' },
+    tujuan: { page: () => GM.TujuanPage, title: 'Tujuan Pembelajaran' },
     materi: { page: () => GM.MaterialPage, title: 'Materi' },
     lab: { page: () => GM.LabPage, title: 'Laboratorium Geometri' },
     misi: { page: () => GM.MissionGame, title: 'Misi Detektif' },

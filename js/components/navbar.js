@@ -3,9 +3,10 @@
   const GM = window.GM;
   const LINKS = [
     { id: 'beranda', label: 'Beranda', icon: 'home' },
+    { id: 'tujuan', label: 'Tujuan', icon: 'flag' },
     { id: 'petunjuk', label: 'Petunjuk', icon: 'help' },
     { id: 'materi', label: 'Materi', icon: 'book' },
-    { id: 'lab', label: 'Laboratorium', icon: 'flask' },
+    { id: 'lab', label: 'Lab', long: 'oratorium', icon: 'flask' },
     { id: 'misi', label: 'Misi', long: ' Detektif', icon: 'target' },
     { id: 'evaluasi', label: 'Evaluasi', icon: 'clipboard' },
     { id: 'hasil', label: 'Hasil', icon: 'trophy' }

@@ -8,7 +8,8 @@
   const TOOLS = [
     { id: 'kongruensi', title: 'Deteksi Kongruensi', icon: 'search', desc: 'Geser titik, putar, cerminkan, dan ubah ukuran dua segitiga.' },
     { id: 'kesebangunan', title: 'Deteksi Kesebangunan', icon: 'scale', desc: 'Ubah faktor skala 0,5 sampai 3 dan amati perbandingan sisi.' },
-    { id: 'segiempat', title: 'Perbandingan Segiempat', icon: 'square', desc: 'Bandingkan dua segiempat berdasarkan sisi dan sudut.' }
+    { id: 'segiempat', title: 'Perbandingan Segiempat', icon: 'square', desc: 'Bandingkan dua segiempat berdasarkan sisi dan sudut.' },
+    { id: 'geogebra', title: 'Media GeoGebra', icon: 'compass', desc: 'Selidiki dilatasi dan kesebangunan di aplikasi GeoGebra (perlu internet).' }
   ];
 
   const TOL = { side: 0.05, angle: 0.5, ratio: 0.01 };
@@ -39,6 +40,7 @@
     <div class="card">
       <div class="panel-title">${GM.icon('search', 20)} Deteksi Kongruensi: ${T('\\triangle ABC')} dan ${T('\\triangle DEF')}</div>
       <p class="muted small">Seret titik bulat untuk mengubah bentuk, seret bagian dalam segitiga untuk memindahkannya. Pasangan bersesuaian: ${T('A \\leftrightarrow D')}, ${T('B \\leftrightarrow E')}, ${T('C \\leftrightarrow F')}.</p>
+      <div style="margin-bottom:10px">${GM.colorToggle()}</div>
       <div class="tool-grid">
         <div>
           <div class="figure grid-bg" id="k-fig"></div>
@@ -101,7 +103,7 @@
         { pts: tris[0], labels: names[0], color: 'a', sideLabels: true, angleLabels: true, handles: true, draggable: true },
         { pts: tris[1], labels: names[1], color: 'b', sideLabels: true, angleLabels: true, handles: true, draggable: true }
       ],
-      opts: { fixed: { scale: W / (WORLD[0] + 2), origin: [-1, -1] }, label: 'Segitiga ABC dan DEF yang dapat digeser' }
+      opts: { fixed: { scale: W / (WORLD[0] + 2), origin: [-1, -1] }, label: 'Segitiga ABC dan DEF yang dapat digeser', pairs: true }
     }), { height: (W) => Math.round((W * (WORLD[1] + 2)) / (WORLD[0] + 2)), maxWidth: 1000, after: (r) => { lay = r.lay; } });
 
     const valid = (P) => geo.sides(P).every((s) => s >= 0.3) && geo.area(P) >= 0.15;
@@ -248,6 +250,7 @@
     <div class="card">
       <div class="panel-title">${GM.icon('scale', 20)} Deteksi Kesebangunan dengan Faktor Skala</div>
       <p class="muted small">${T('\\triangle DEF')} dibuat dari ${T('\\triangle ABC')} dengan faktor skala ${T('k')}. Geser slider dan amati label panjang sisi, perbandingan, serta status yang diperbarui otomatis.</p>
+      <div style="margin-bottom:10px">${GM.colorToggle()}</div>
       <div class="tool-grid">
         <div>
           <div class="figure grid-bg" id="s-fig"></div>
@@ -292,7 +295,7 @@
         { pts: P, labels: ['A', 'B', 'C'], color: 'a', sideLabels: true, angleLabels: true, title: '△ABC' },
         { pts: Q, labels: ['D', 'E', 'F'], color: 'b', sideLabels: true, angleLabels: true, title: '△DEF' }
       ],
-      opts: { label: 'Segitiga ABC dan hasil skalanya DEF' }
+      opts: { label: 'Segitiga ABC dan hasil skalanya DEF', pairs: true }
     }), { aspect: 0.55, maxWidth: 900 });
 
     function update() {
@@ -428,11 +431,67 @@
     params(0); params(1); update();
   }
 
+  /* ================= ALAT 4: MEDIA GEOGEBRA ================= */
+  const GGB_SRC = 'https://www.geogebra.org/apps/deployggb.js';
+  function toolGeogebra() {
+    return `
+    <div class="card">
+      <div class="panel-title">${GM.icon('compass', 20)} Media GeoGebra: dilatasi dan kesebangunan</div>
+      <p class="muted small">GeoGebra adalah aplikasi matematika gratis. Applet di bawah dimuat dari geogebra.org, jadi membutuhkan koneksi internet. Segitiga kedua dibuat dengan perintah <code>Dilate</code> (dilatasi) dari segitiga pertama dengan faktor ${T('k')}.</p>
+      <div class="grid grid-2">
+        <div class="callout"><div class="callout-title">${GM.icon('search', 18)} Lembar inkuiri</div>
+          <ol class="clean small">
+            <li>Geser slider ${T('k')}. Bagaimana perubahan panjang sisi segitiga kedua?</li>
+            <li>Gunakan alat <b>Jarak atau Panjang</b> untuk mengukur sisi seletak, lalu hitung perbandingannya. Apakah selalu sama dengan ${T('k')}?</li>
+            <li>Gunakan alat <b>Sudut</b> pada sudut seletak. Apakah besarnya berubah saat ${T('k')} berubah?</li>
+            <li>Pada nilai ${T('k')} berapa kedua segitiga kongruen?</li>
+            <li>Seret titik ${T('A')}, ${T('B')}, atau ${T('C')}. Apakah kesimpulanmu tetap berlaku?</li>
+          </ol></div>
+        <div class="callout mint"><div class="callout-title">${GM.icon('bulb', 18)} Kesimpulan yang diharapkan</div><p class="small">Sisi seletak sebanding dengan perbandingan ${T('k')}, sudut seletak sama besar, dan kedua segitiga kongruen ketika ${T('k = 1')}.</p></div>
+      </div>
+      <div class="btn-row" style="margin:12px 0"><button class="btn btn-primary" id="ggb-load">${GM.icon('play', 18)} Muat GeoGebra</button>
+        <a class="btn btn-outline" href="https://www.geogebra.org/geometry" target="_blank" rel="noopener">${GM.icon('right', 18)} Buka GeoGebra Geometri di tab baru</a></div>
+      <div id="ggb-status" class="small muted"></div>
+      <div id="ggb-element" style="width:100%;min-height:0"></div>
+    </div>`;
+  }
+  function initGeogebra(root) {
+    const st = root.querySelector('#ggb-status');
+    const fail = () => { st.innerHTML = `<div class="feedback bad"><div class="f-ico">${GM.icon('x', 18, 3)}</div><div><strong>GeoGebra tidak dapat dimuat.</strong>Periksa koneksi internet, atau buka GeoGebra di tab baru lalu buat sendiri: titik A, B, C, perintah <code>Polygon(A,B,C)</code>, slider <code>k</code>, lalu <code>Dilate(t1, k, A)</code>.</div></div>`; };
+    function inject() {
+      const box = root.querySelector('#ggb-element');
+      const width = Math.max(300, Math.min(1000, box.clientWidth || 800));
+      // eslint-disable-next-line no-undef
+      const applet = new window.GGBApplet({
+        appName: 'geometry', width, height: Math.round(Math.min(520, width * 0.7)),
+        showToolBar: true, showAlgebraInput: true, showMenuBar: false, enableShiftDragZoom: true, showResetIcon: true,
+        appletOnLoad(api) {
+          ['A=(0,0)', 'B=(4,0)', 'C=(1,3)', 't1=Polygon(A,B,C)', 'k=Slider(0.5,3,0.1)', 'SetValue(k,1.5)', 'P=(6,0)', 't2=Translate(Dilate(t1,k,A),Vector(A,P))']
+            .forEach((c) => { try { api.evalCommand(c); } catch (e) { /* abaikan perintah gagal */ } });
+          try { api.setCoordSystem(-1, 16, -2, 9); } catch (e) { /* opsional */ }
+          st.textContent = 'GeoGebra siap. Ikuti lembar inkuiri di atas.';
+        }
+      }, true);
+      applet.inject('ggb-element');
+    }
+    root.querySelector('#ggb-load').addEventListener('click', () => {
+      st.textContent = 'Memuat GeoGebra dari geogebra.org ...';
+      if (window.GGBApplet) { inject(); return; }
+      const sc = document.createElement('script');
+      sc.src = GGB_SRC;
+      const timer = setTimeout(fail, 20000);
+      sc.onload = () => { clearTimeout(timer); try { inject(); } catch (e) { fail(); } };
+      sc.onerror = () => { clearTimeout(timer); fail(); };
+      document.head.appendChild(sc);
+    });
+  }
+
   /* ================= Halaman ================= */
   const MAP = {
     kongruensi: [toolKongruensi, initKongruensi],
     kesebangunan: [toolKesebangunan, initKesebangunan],
-    segiempat: [toolSegiempat, initSegiempat]
+    segiempat: [toolSegiempat, initSegiempat],
+    geogebra: [toolGeogebra, initGeogebra]
   };
 
   function render(el, params) {

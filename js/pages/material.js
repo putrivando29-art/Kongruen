@@ -6,15 +6,18 @@
   const F = GM.formula;
   const f = GM.fmt;
 
+  // Satu tab untuk setiap Tujuan Pembelajaran (TP 1–10)
   const TABS = [
-    { id: 'kongruensi', title: 'Kekongruenan', icon: 'layers' },
-    { id: 'syarat-kongruen', title: 'Syarat Kongruen Segitiga', icon: 'triangle' },
-    { id: 'sifat', title: 'Sifat Kekongruenan', icon: 'copy' },
-    { id: 'kesebangunan', title: 'Kesebangunan', icon: 'scale' },
-    { id: 'syarat-sebangun', title: 'Syarat Sebangun Segitiga', icon: 'angle' },
-    { id: 'segiempat', title: 'Kesebangunan Segiempat', icon: 'square' },
-    { id: 'teorema', title: 'Teorema & Rumus Penting', icon: 'ruler' },
-    { id: 'penerapan', title: 'Penerapan Sehari-hari', icon: 'map' }
+    { id: 'kongruen-segitiga', tp: 1, title: 'Kekongruenan Segitiga' },
+    { id: 'kongruen-segiempat', tp: 2, title: 'Kekongruenan Segiempat' },
+    { id: 'sebangun-segitiga', tp: 3, title: 'Kesebangunan Segitiga' },
+    { id: 'sebangun-segiempat', tp: 4, title: 'Kesebangunan Segiempat' },
+    { id: 'ukuran-kongruen-segitiga', tp: 5, title: 'Sisi & Sudut Segitiga Kongruen' },
+    { id: 'ukuran-kongruen-segiempat', tp: 6, title: 'Sisi & Sudut Segiempat Kongruen' },
+    { id: 'ukuran-sebangun-segitiga', tp: 7, title: 'Sisi & Sudut Segitiga Sebangun' },
+    { id: 'ukuran-sebangun-segiempat', tp: 8, title: 'Sisi & Sudut Segiempat Sebangun' },
+    { id: 'masalah-kongruen', tp: 9, title: 'Masalah Kontekstual Kekongruenan' },
+    { id: 'masalah-sebangun', tp: 10, title: 'Masalah Kontekstual Kesebangunan' }
   ];
 
   /* ============ Utilitas kecil ============ */
@@ -56,77 +59,92 @@
       </div>
     </div>
 
-    <div class="card">
-      <h3>${GM.icon('flask', 20)} Coba sendiri: geser, putar, dan cerminkan</h3>
-      <p class="muted small">Segitiga biru ${T("A'B'C'")} adalah salinan segitiga abu-abu ${T('ABC')}. Seret segitiga biru atau gunakan tombol. Perhatikan bahwa panjang sisi dan besar sudutnya tidak pernah berubah. Tantangan: tumpuk segitiga biru tepat di atas segitiga abu-abu!</p>
+    ${demoHTML('tf', 'ATP 1 · Eksplorasi karton virtual: geser, putar, dan cerminkan', `Bayangkan dua potongan kertas karton berbentuk segitiga. Segitiga biru ${T("A'B'C'")} adalah salinan segitiga abu-abu ${T('ABC')}. Seret segitiga biru atau gunakan tombol, lalu amati tabel: panjang sisi dan besar sudutnya tidak pernah berubah. Tantangan: tumpuk segitiga biru tepat di atas segitiga abu-abu!`)}`;
+  }
+
+  /* Eksplorasi kekongruenan (ATP 1): salinan bangun dapat digeser, diputar, dan dicerminkan. */
+  function demoHTML(p, title, desc) {
+    return `<div class="card">
+      <h3>${GM.icon('flask', 20)} ${title}</h3>
+      <p class="muted small">${desc}</p>
       <div class="tool-grid">
         <div>
-          <div class="figure grid-bg" id="tf-fig"></div>
+          <div class="figure grid-bg" id="${p}-fig"></div>
           <div class="btn-row" style="margin-top:12px">
             <div class="seg" aria-label="Translasi">
-              <button data-tf="left" title="Geser kiri 1 cm">${GM.icon('left', 16)}</button>
-              <button data-tf="right" title="Geser kanan 1 cm">${GM.icon('right', 16)}</button>
-              <button data-tf="up" title="Geser atas 1 cm">${GM.icon('up', 16)}</button>
-              <button data-tf="down" title="Geser bawah 1 cm">${GM.icon('down', 16)}</button>
+              <button data-${p}="left" title="Geser kiri 1 cm">${GM.icon('left', 16)}</button>
+              <button data-${p}="right" title="Geser kanan 1 cm">${GM.icon('right', 16)}</button>
+              <button data-${p}="up" title="Geser atas 1 cm">${GM.icon('up', 16)}</button>
+              <button data-${p}="down" title="Geser bawah 1 cm">${GM.icon('down', 16)}</button>
             </div>
-            <button class="btn btn-outline btn-sm" data-tf="rotl">${GM.icon('rotl', 16)} Putar 15°</button>
-            <button class="btn btn-outline btn-sm" data-tf="rotr">${GM.icon('rotr', 16)} Putar −15°</button>
-            <button class="btn btn-outline btn-sm" data-tf="flip">${GM.icon('mirror', 16)} Cerminkan</button>
-            <button class="btn btn-danger-soft btn-sm" data-tf="reset">${GM.icon('refresh', 16)} Ulang</button>
+            <button class="btn btn-outline btn-sm" data-${p}="rotl">${GM.icon('rotl', 16)} Putar 15°</button>
+            <button class="btn btn-outline btn-sm" data-${p}="rotr">${GM.icon('rotr', 16)} Putar −15°</button>
+            <button class="btn btn-outline btn-sm" data-${p}="flip">${GM.icon('mirror', 16)} Cerminkan</button>
+            <button class="btn btn-danger-soft btn-sm" data-${p}="reset">${GM.icon('refresh', 16)} Ulang</button>
           </div>
         </div>
         <div>
-          <div id="tf-status"></div>
-          <div class="table-wrap" style="margin-top:12px"><table class="data compact" id="tf-table"></table></div>
-          <p class="small muted" id="tf-count" style="margin-top:8px"></p>
+          <div id="${p}-status"></div>
+          <div class="table-wrap" style="margin-top:12px"><table class="data compact" id="${p}-table"></table></div>
+          <p class="small muted" id="${p}-count" style="margin-top:8px"></p>
         </div>
       </div>
     </div>`;
   }
 
   function initKongruensi(panel) {
+    initDemo(panel, 'tf', { orig: [[2, 2], [7, 2], [3.2, 6]], labels: ['A', 'B', 'C'] });
+  }
+
+  // cfg: { orig: titik bangun asli, labels }. Salinan awal = asli diputar 30° lalu digeser 11 cm.
+  function initDemo(panel, p, cfg) {
     const WORLD = [22, 9];
-    const orig = [[2, 2], [7, 2], [3.2, 6]];
+    const orig = cfg.orig;
+    const L = cfg.labels, L2 = L.map((x) => x + "'");
+    const n = orig.length;
     const start = () => geo.translate(geo.rotate(orig, 30), 11, 0);
     let pts = start();
     let cnt = { t: 0, r: 0, f: 0 };
     let lay = null;
-    const box = panel.querySelector('#tf-fig');
+    const box = panel.querySelector(`#${p}-fig`);
+    const name = n === 3 ? 'segitiga' : 'segiempat';
 
     const draw = GM.svg.mount(box, (W) => ({
       shapes: [
-        { pts: orig, labels: ['A', 'B', 'C'], color: 'ghost', dashed: true },
-        { pts, labels: ["A'", "B'", "C'"], color: 'a', draggable: true }
+        { pts: orig, labels: L, color: 'ghost', dashed: true },
+        { pts, labels: L2, color: 'a', draggable: true }
       ],
-      opts: { fixed: { scale: W / (WORLD[0] + 2), origin: [-1, -1] }, label: 'Segitiga ABC dan salinannya' }
+      opts: { fixed: { scale: W / (WORLD[0] + 2), origin: [-1, -1] }, label: `Bangun ${L.join('')} dan salinannya` }
     }), { height: (W) => Math.round((W * (WORLD[1] + 2)) / (WORLD[0] + 2)), after: (r) => { lay = r.lay; } });
 
+    // Berimpit jika setiap titik asli tertutup oleh suatu titik salinan (urutan keliling, searah atau berlawanan).
     function coincide() {
-      const perms = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
-      return perms.some((p) => p.every((j, i) => geo.dist(orig[i], pts[j]) < 0.15));
+      for (const o of [1, -1]) for (let sh = 0; sh < n; sh++) {
+        if (orig.every((q, i) => geo.dist(q, pts[((sh + o * i) % n + n) % n]) < 0.15)) return true;
+      }
+      return false;
     }
     function update() {
       draw();
       const s1 = geo.sides(orig), s2 = geo.sides(pts), a1 = geo.angles(orig), a2 = geo.angles(pts);
-      const names = [['AB', "A'B'"], ['BC', "B'C'"], ['CA', "C'A'"]];
-      const an = [['∠A', "∠A'"], ['∠B', "∠B'"], ['∠C', "∠C'"]];
-      panel.querySelector('#tf-table').innerHTML = `<tr><th>Asli</th><th>Salinan</th><th>Sama?</th></tr>` +
-        names.map((n, i) => `<tr><td>${n[0]} = ${f(s1[i], 2)} cm</td><td>${n[1]} = ${f(s2[i], 2)} cm</td><td>${ok(Math.abs(s1[i] - s2[i]) < 0.01)}</td></tr>`).join('') +
-        an.map((n, i) => `<tr><td>${n[0]} = ${f(a1[i], 1)}°</td><td>${n[1]} = ${f(a2[i], 1)}°</td><td>${ok(Math.abs(a1[i] - a2[i]) < 0.1)}</td></tr>`).join('');
+      const sn = (A, i) => A[i] + A[(i + 1) % n];
+      panel.querySelector(`#${p}-table`).innerHTML = `<tr><th>Asli</th><th>Salinan</th><th>Sama?</th></tr>` +
+        s1.map((v, i) => `<tr><td>${sn(L, i)} = ${f(v, 2)} cm</td><td>${sn(L2, i)} = ${f(s2[i], 2)} cm</td><td>${ok(Math.abs(v - s2[i]) < 0.01)}</td></tr>`).join('') +
+        a1.map((v, i) => `<tr><td>∠${L[i]} = ${f(v, 1)}°</td><td>∠${L2[i]} = ${f(a2[i], 1)}°</td><td>${ok(Math.abs(v - a2[i]) < 0.1)}</td></tr>`).join('');
       const hit = coincide();
-      panel.querySelector('#tf-status').innerHTML = hit
-        ? `<div class="status congruent pulse"><div class="s-ico">${GM.icon('check', 22, 3)}</div><div>Tepat berimpit!<small>Salinan menutupi segitiga asli dengan sempurna: ${T("\\triangle ABC \\cong \\triangle A'B'C'")}.</small></div></div>`
+      panel.querySelector(`#${p}-status`).innerHTML = hit
+        ? `<div class="status congruent pulse"><div class="s-ico">${GM.icon('check', 22, 3)}</div><div>Tepat berimpit!<small>Salinan menutupi ${name} asli dengan sempurna, jadi keduanya kongruen.</small></div></div>`
         : `<div class="status congruent"><div class="s-ico">${GM.icon('layers', 22)}</div><div>Tetap KONGRUEN<small>Bentuk dan ukuran tidak berubah oleh translasi, rotasi, maupun refleksi.</small></div></div>`;
-      panel.querySelector('#tf-count').textContent = `Transformasi dilakukan: translasi ${cnt.t}×, rotasi ${cnt.r}×, refleksi ${cnt.f}×.`;
-      if (hit) GM.store.update((s) => { s.lab.overlay = true; });
+      panel.querySelector(`#${p}-count`).textContent = `Transformasi dilakukan: translasi ${cnt.t}×, rotasi ${cnt.r}×, refleksi ${cnt.f}×.`;
+      if (hit && !GM.store.get().lab['overlay_' + p]) GM.store.update((s) => { s.lab['overlay_' + p] = true; });
     }
     const keepInside = (q) => {
       const c = geo.centroid(q);
       const dx = GM.clamp(c[0], 1.5, WORLD[0] - 1.5) - c[0], dy = GM.clamp(c[1], 1.5, WORLD[1] - 1.5) - c[1];
       return geo.translate(q, dx, dy);
     };
-    panel.querySelectorAll('[data-tf]').forEach((b) => b.addEventListener('click', () => {
-      const a = b.dataset.tf;
+    panel.querySelectorAll(`[data-${p}]`).forEach((b) => b.addEventListener('click', () => {
+      const a = b.dataset[p];
       if (a === 'left') { pts = geo.translate(pts, -1, 0); cnt.t++; }
       if (a === 'right') { pts = geo.translate(pts, 1, 0); cnt.t++; }
       if (a === 'up') { pts = geo.translate(pts, 0, 1); cnt.t++; }
@@ -139,21 +157,19 @@
       update();
     }));
 
-    // Seret segitiga (langkah 0,5 cm)
+    // Seret bangun (langkah 0,5 cm)
     let drag = null;
     box.addEventListener('pointerdown', (e) => {
       const t = e.target.closest('[data-drag="body"]');
       if (!t || !lay) return;
-      const svg = box.querySelector('svg');
-      const [x, y] = GM.svg.pointer(svg, e);
+      const [x, y] = GM.svg.pointer(box.querySelector('svg'), e);
       drag = { w0: lay.toWorld(x, y), p0: pts };
       box.setPointerCapture(e.pointerId);
       e.preventDefault();
     });
     box.addEventListener('pointermove', (e) => {
       if (!drag) return;
-      const svg = box.querySelector('svg');
-      const [x, y] = GM.svg.pointer(svg, e);
+      const [x, y] = GM.svg.pointer(box.querySelector('svg'), e);
       const w = lay.toWorld(x, y);
       const dx = Math.round((w[0] - drag.w0[0]) * 2) / 2, dy = Math.round((w[1] - drag.w0[1]) * 2) / 2;
       const np = keepInside(geo.translate(drag.p0, dx, dy));
@@ -364,10 +380,14 @@
       </div>
       <div class="callout mint"><div class="callout-title">${GM.icon('bulb', 18)} Kekongruenan adalah kasus khusus</div><p>Jika ${T('k = 1')}, sisi-sisi bersesuaian sama panjang sehingga kedua bangun kongruen. Jadi kekongruenan merupakan kasus khusus kesebangunan ketika ${T('k = 1')}.</p></div>
       <p class="small muted">Catatan: jika ${T('k > 1')} terjadi pembesaran, jika ${T('0 < k < 1')} terjadi pengecilan.</p>
-    </div>
-    <div class="card">
-      <h3>${GM.icon('flask', 20)} Eksperimen faktor skala pada persegi panjang</h3>
-      <p class="muted small">Persegi panjang pertama berukuran 3 cm × 2 cm. Geser slider untuk mengubah faktor skala dan amati perubahan keliling serta luasnya.</p>
+    </div>`;
+  }
+
+  // ATP 2: mengamati pembesaran/pengecilan foto
+  function fotoExperiment() {
+    return `<div class="card">
+      <h3>${GM.icon('photo', 20)} ATP 2 · Eksplorasi: memperbesar dan memperkecil foto</h3>
+      <p class="muted small">Sebuah foto berukuran 3 cm × 2 cm dicetak ulang dengan faktor skala ${T('k')}. Geser slider, lalu amati: sudut foto tetap ${T('90^\\circ')}, setiap sisi dikali ${T('k')}, keliling dikali ${T('k')}, dan luas dikali ${T('k^2')}.</p>
       <div class="tool-grid">
         <div><div class="figure grid-bg" id="ks-fig"></div></div>
         <div>
@@ -385,10 +405,10 @@
       const k = +inp.value;
       return {
         shapes: [
-          { pts: geo.quad('persegipanjang', { p: 3, l: 2 }), labels: ['A', 'B', 'C', 'D'], sideLabels: true, color: 'a', title: 'Bangun 1', rightMarks: true },
-          { pts: geo.quad('persegipanjang', { p: 3 * k, l: 2 * k }), labels: ['P', 'Q', 'R', 'S'], sideLabels: true, color: 'b', title: 'Bangun 2' }
+          { pts: geo.quad('persegipanjang', { p: 3, l: 2 }), labels: ['A', 'B', 'C', 'D'], sideLabels: true, color: 'a', title: 'Foto asli', rightMarks: true },
+          { pts: geo.quad('persegipanjang', { p: 3 * k, l: 2 * k }), labels: ['P', 'Q', 'R', 'S'], sideLabels: true, color: 'b', title: 'Foto cetak ulang' }
         ],
-        opts: { label: 'Dua persegi panjang sebangun' }
+        opts: { label: 'Foto asli dan foto cetak ulang', pairs: true }
       };
     }, { aspect: 0.55 });
     function update() {
@@ -553,7 +573,7 @@
   function tabTeorema() {
     return `
     <div class="card">
-      <h2>${GM.icon('ruler', 24)} Teorema dan Rumus Penting</h2>
+      <h2>${GM.icon('ruler', 24)} Teorema pada Segitiga Sebangun</h2>
       <h3>1. Teorema Thales (garis sejajar dalam segitiga)</h3>
       <p>Jika ${T('DE \\parallel BC')} dengan ${T('D')} pada ${T('AB')} dan ${T('E')} pada ${T('AC')} dalam ${T('\\triangle ABC')}, maka ${T('\\triangle ADE \\sim \\triangle ABC')} (AA) dan berlaku:</p>
       <div class="grid grid-2">${F('\\frac{AD}{DB} = \\frac{AE}{EC}')}${F('\\frac{AD}{AB} = \\frac{AE}{AC} = \\frac{DE}{BC}')}</div>
@@ -572,24 +592,26 @@
       </div>
     </div>
     <div class="card">
-      <div class="grid grid-2">
-        <div>
-          <h3>3. Teorema Pythagoras</h3>
-          <p>Pada segitiga siku-siku di ${T('C')} dengan hipotenusa ${T('AB')}:</p>
-          ${F('AC^2 + BC^2 = AB^2')}
-          <p class="small muted">Contoh: ${T('6^2 + 8^2 = 36 + 64 = 100 = 10^2')}.</p>
-        </div>
-        <div>
-          <h3>4. Perbandingan luas bangun sebangun</h3>
-          ${F('\\frac{L_2}{L_1} = k^2')}
-          <p class="small muted">Contoh: jika ${T('k = 3')}, luas bangun kedua ${T('3^2 = 9')} kali luas bangun pertama.</p>
-        </div>
-      </div>
+      <h3>3. Teorema Pythagoras</h3>
+      <p>Pada segitiga siku-siku di ${T('C')} dengan hipotenusa ${T('AB')}:</p>
+      ${F('AC^2 + BC^2 = AB^2')}
+      <p class="small muted">Contoh: ${T('6^2 + 8^2 = 36 + 64 = 100 = 10^2')}. Teorema ini sering dipakai bersama kesebangunan untuk mencari sisi yang hilang.</p>
+    </div>`;
+  }
+
+  // Rumus penting untuk segiempat sebangun (TP 8)
+  function teoremaSegiempat() {
+    return `
+    <div class="card">
+      <h3>Perbandingan keliling dan luas bangun sebangun</h3>
+      <div class="grid grid-2">${F('\\frac{K_2}{K_1} = k')}${F('\\frac{L_2}{L_1} = k^2')}</div>
+      <p class="small muted">Contoh: persegi panjang ${T('4 \\times 3')} diperbesar dengan ${T('k = 3')} menjadi ${T('12 \\times 9')}. Kelilingnya ${T('14 \\to 42')} (dikali 3) dan luasnya ${T('12 \\to 108')} (dikali ${T('3^2 = 9')}).</p>
     </div>
     <div class="card">
-      <h3>5. Garis tengah trapesium</h3>
+      <h3>Garis tengah trapesium</h3>
       <p>Ruas garis yang menghubungkan titik tengah kedua kaki trapesium sejajar dengan kedua sisi sejajar, dan panjangnya:</p>
-      ${F('\\text{Midsegment} = \\frac{a + b}{2}')}
+      ${F('\\text{Garis tengah} = \\frac{a + b}{2}')}
+      <p class="small muted">Asal rumus (kesebangunan): tarik diagonal ${T('AC')}. Garis tengah terbagi dua bagian, masing-masing menghubungkan titik tengah dua sisi segitiga, sehingga sebangun dengan faktor ${T('k = \\frac{1}{2}')}. Panjang bagiannya ${T('\\frac{a}{2}')} dan ${T('\\frac{b}{2}')}, jumlahnya ${T('\\frac{a + b}{2}')}.</p>
       <div class="tool-grid">
         <div><div class="figure grid-bg" id="mt-fig"></div></div>
         <div>${slider('mt-a', 'Sisi sejajar bawah a', 3, 10, 0.5, 8, ' cm')}${slider('mt-b', 'Sisi sejajar atas b', 1, 9.5, 0.5, 4, ' cm')}<div id="mt-out"></div></div>
@@ -598,7 +620,12 @@
   }
 
   function initTeorema(panel) {
-    // --- Thales ---
+    if (panel.querySelector('#th-t')) initThales(panel);
+    if (panel.querySelector('#gt-x')) initGarisTinggi(panel);
+    if (panel.querySelector('#mt-a')) initMidsegment(panel);
+  }
+
+  function initThales(panel) {
     const B = [0, 0], C = [9, 0], A = [3, 6];
     const th = panel.querySelector('#th-t');
     const thBox = panel.querySelector('#th-fig');
@@ -638,7 +665,9 @@
     th.addEventListener('input', thUpdate);
     thUpdate();
 
-    // --- Garis tinggi ---
+  }
+
+  function initGarisTinggi(panel) {
     const gx = panel.querySelector('#gt-x');
     const gtBox = panel.querySelector('#gt-fig');
     const gtDraw = GM.svg.mount(gtBox, () => {
@@ -677,7 +706,9 @@
     gx.addEventListener('input', gtUpdate);
     gtUpdate();
 
-    // --- Garis tengah trapesium ---
+  }
+
+  function initMidsegment(panel) {
     const ma = panel.querySelector('#mt-a'), mb = panel.querySelector('#mt-b');
     const mtDraw = GM.svg.mount(panel.querySelector('#mt-fig'), () => {
       const a = +ma.value, b = Math.min(+mb.value, a - 0.5), h = 4, x = (a - b) / 2 - 0.8;
@@ -702,7 +733,7 @@
       panel.querySelector('#mt-a-o').textContent = f(a, 1) + ' cm';
       panel.querySelector('#mt-b-o').textContent = f(b, 1) + ' cm';
       mtDraw();
-      panel.querySelector('#mt-out').innerHTML = F(`\\text{Midsegment} = \\frac{${GM.fmtTex(a, 1)} + ${GM.fmtTex(b, 1)}}{2} = ${GM.fmtTex((a + b) / 2, 2)}\\text{ cm}`) +
+      panel.querySelector('#mt-out').innerHTML = F(`\\text{Garis tengah} = \\frac{${GM.fmtTex(a, 1)} + ${GM.fmtTex(b, 1)}}{2} = ${GM.fmtTex((a + b) / 2, 2)}\\text{ cm}`) +
         `<p class="small muted">Titik hijau adalah titik tengah kaki ${T('AD')} dan ${T('BC')}.</p>`;
     }
     ma.addEventListener('input', mtUpdate);
@@ -818,14 +849,108 @@
     }
   ];
 
-  function tabPenerapan() {
-    return `
-    <div class="card">
-      <h2>${GM.icon('map', 24)} Penerapan dalam Kehidupan Sehari-hari</h2>
-      <p>Kesebangunan dan kekongruenan dipakai setiap hari: dari mengukur benda tinggi hingga membuat denah. Jawab pertanyaan pada setiap kasus di bawah ini.</p>
-    </div>
-    <div class="grid grid-2">
-      ${APPS.map((a) => `<div class="card app-card" data-app="${a.id}">
+  /* ---------- Soal kontekstual tambahan (TP 9 dan TP 10) ---------- */
+  function riverArt(ac, de, unknownLabel) {
+    const s = Math.min(4, 128 / de, 90 / ac);
+    const A = [60, 40 + de * s], B = [60, 40], C = [60 + ac * s, A[1]], D = [60 + 2 * ac * s, A[1]], E = [D[0], A[1] + de * s];
+    const H = E[1] + 24;
+    return `<svg viewBox="0 0 ${D[0] + 70} ${H}" role="img" aria-label="Mengukur lebar sungai dengan segitiga kongruen">
+      <rect x="0" y="${B[1] + 8}" width="${D[0] + 70}" height="${A[1] - B[1] - 14}" fill="#BFDBFE"/>
+      <circle cx="${B[0]}" cy="${B[1] - 6}" r="10" fill="#22C55E"/>
+      <path d="M${B[0]} ${B[1]} L${E[0]} ${E[1]}" stroke="#17324D" stroke-width="2" stroke-dasharray="6 4"/>
+      <path d="M${B[0]} ${B[1]} V${A[1]} H${D[0]} V${E[1]}" fill="none" stroke="#2563EB" stroke-width="2.5"/>
+      <path d="M${A[0]} ${A[1] - 12} h12 v12 M${D[0]} ${D[1] + 12} h-12 v-12" fill="none" stroke="#2563EB" stroke-width="1.6"/>
+      ${[['A', A, -14, 16], ['B', B, -18, 4], ['C', C, 0, -10], ['D', D, 14, -6], ['E', E, 14, 4]].map(([t, p, dx, dy]) => `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#17324D"/><text class="v-label" x="${p[0] + dx}" y="${p[1] + dy}" text-anchor="middle">${t}</text>`).join('')}
+      <text class="s-label" x="${(A[0] + C[0]) / 2}" y="${A[1] + 18}" text-anchor="middle">${f(ac)} m</text>
+      <text class="s-label" x="${(C[0] + D[0]) / 2}" y="${A[1] + 18}" text-anchor="middle">${f(ac)} m</text>
+      <text class="s-label" x="${D[0] + 10}" y="${(D[1] + E[1]) / 2}">${f(de)} m</text>
+      <text class="s-label" x="${A[0] - 10}" y="${(A[1] + B[1]) / 2 + 4}" text-anchor="end">${unknownLabel}</text>
+    </svg>`;
+  }
+  function mirrorArt(eye, d1, d2, label) {
+    const t = (eye * d2) / d1;
+    const s = Math.min(16, 290 / (d1 + d2), 180 / t), g = 30 + t * s;
+    const P = 40, M = P + d1 * s, G = M + d2 * s;
+    return `<svg viewBox="0 0 ${G + 40} ${g + 26}" role="img" aria-label="Mengukur tinggi dengan cermin">
+      <line x1="0" y1="${g}" x2="${G + 40}" y2="${g}" stroke="#94A3B8" stroke-width="2"/>
+      <rect x="${G}" y="${g - t * s}" width="24" height="${t * s}" fill="#CBD5E1" stroke="#17324D" stroke-width="2"/>
+      <line x1="${P}" y1="${g}" x2="${P}" y2="${g - eye * s}" stroke="#17324D" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="${P}" cy="${g - eye * s - 6}" r="6" fill="#17324D"/>
+      <rect x="${M - 9}" y="${g - 3}" width="18" height="5" fill="#38BDF8" stroke="#0369A1"/>
+      <path d="M${P} ${g - eye * s} L${M} ${g} L${G} ${g - t * s}" fill="none" stroke="#F59E0B" stroke-width="2" stroke-dasharray="6 4"/>
+      <text class="s-label" x="${P - 6}" y="${g - 8}" text-anchor="end">${f(eye)} m</text>
+      <text class="s-label" x="${(P + M) / 2}" y="${g + 18}" text-anchor="middle">${f(d1)} m</text>
+      <text class="s-label" x="${(M + G) / 2}" y="${g + 18}" text-anchor="middle">${f(d2)} m</text>
+      <text class="s-label" x="${G - 6}" y="${g - (t * s) / 2}" text-anchor="end">${label}</text>
+    </svg>`;
+  }
+
+  const APPS_K = [
+    {
+      id: 'sungai-k', icon: 'map', title: 'Menaksir lebar sungai dengan segitiga kongruen',
+      text: 'Titik $A$ tepat berhadapan dengan pohon $B$ di seberang sungai. Dari $A$ kamu berjalan menyusuri tepi $AC = CD = 15$ m, lalu dari $D$ berjalan tegak lurus menjauhi sungai sampai titik $E$ yang segaris dengan $C$ dan $B$. Ternyata $DE = 24$ m.',
+      ask: 'Berapa lebar sungai $AB$?', unit: 'm', ans: 24,
+      explain: '$\\angle A = \\angle D = 90^\\circ$, $AC = DC$, dan $\\angle ACB = \\angle DCE$ (bertolak belakang), jadi $\\triangle ABC \\cong \\triangle DEC$ (ASA). Sisi seletak sama panjang: $AB = DE = 24$ m.',
+      art: () => riverArt(15, 24, 'AB = ?')
+    },
+    {
+      id: 'kuda-kuda', icon: 'triangle', title: 'Rangka kuda-kuda atap',
+      text: 'Kuda-kuda atap berbentuk segitiga sama kaki $ABC$ dengan $AC = BC = 13$ m dan bentang $AB = 24$ m. Tiang $CD$ tegak lurus $AB$. Karena $\\triangle ADC \\cong \\triangle BDC$ (RHS), titik $D$ membagi $AB$ sama panjang.',
+      ask: 'Berapa panjang tiang $CD$?', unit: 'm', ans: 5,
+      explain: '$AD = DB = \\frac{24}{2} = 12$ m (sisi seletak dari dua segitiga kongruen). Pythagoras: $CD = \\sqrt{13^2 - 12^2} = \\sqrt{169 - 144} = \\sqrt{25} = 5$ m.',
+      art: () => `<svg viewBox="0 0 360 200" role="img" aria-label="Kuda-kuda atap">
+        <polygon points="40,170 320,170 180,105" fill="#FEF3C7" stroke="#92400E" stroke-width="4" stroke-linejoin="round"/>
+        <line x1="180" y1="105" x2="180" y2="170" stroke="#92400E" stroke-width="3"/>
+        <path d="M180 158 h12 v12" fill="none" stroke="#17324D" stroke-width="1.6"/>
+        <text class="v-label" x="28" y="186">A</text><text class="v-label" x="322" y="186">B</text><text class="v-label" x="180" y="96" text-anchor="middle">C</text><text class="v-label" x="180" y="190" text-anchor="middle">D</text>
+        <text class="s-label" x="96" y="128" text-anchor="middle">13 m</text><text class="s-label" x="264" y="128" text-anchor="middle">13 m</text>
+        <text class="s-label" x="110" y="190" text-anchor="middle">24 m</text><text class="s-label" x="196" y="145">?</text>
+      </svg>`
+    },
+    {
+      id: 'layang', icon: 'compass', title: 'Kerangka layang-layang mainan',
+      text: 'Kerangka layang-layang $ABCD$ dibuat dengan $AB = AD = 25$ cm dan $CB = CD = 40$ cm. Batang $AC$ membagi layang-layang menjadi $\\triangle ABC$ dan $\\triangle ADC$ yang kongruen (SSS). Diketahui $\\angle ABC = 100^\\circ$.',
+      ask: 'Berapa besar $\\angle ADC$ (dalam derajat)?', unit: '°', ans: 100,
+      explain: '$AB = AD$, $CB = CD$, dan $AC$ milik bersama, jadi $\\triangle ABC \\cong \\triangle ADC$ (SSS). Sudut seletak sama besar: $\\angle ADC = \\angle ABC = 100^\\circ$.',
+      art: () => `<svg viewBox="0 0 360 230" role="img" aria-label="Sketsa kerangka layang-layang">
+        <polygon points="180,16 120,78 180,214 240,78" fill="#BBF7D0" stroke="#0F9D58" stroke-width="3" stroke-linejoin="round"/>
+        <line x1="180" y1="16" x2="180" y2="214" stroke="#17324D" stroke-width="2" stroke-dasharray="6 4"/>
+        <text class="v-label" x="180" y="12" text-anchor="middle">A</text><text class="v-label" x="104" y="82">B</text><text class="v-label" x="180" y="228" text-anchor="middle">C</text><text class="v-label" x="246" y="82">D</text>
+        <text class="s-label" x="132" y="40">25 cm</text><text class="s-label" x="230" y="40">25 cm</text><text class="s-label" x="104" y="150">40 cm</text><text class="s-label" x="226" y="150">40 cm</text>
+        <text class="a-label" x="146" y="88">100°</text><text class="a-label" x="200" y="88">?</text>
+        <text x="350" y="224" font-size="11" fill="#64748B" text-anchor="end">sketsa, tidak berskala</text>
+      </svg>`
+    }
+  ];
+
+  const APPS_S = [
+    {
+      id: 'cermin', icon: 'eye', title: 'Menaksir tinggi gedung dengan cermin',
+      text: 'Cermin datar diletakkan di tanah. Kamu mundur sampai puncak gedung terlihat di tengah cermin. Tinggi matamu $1{,}6$ m, jarak kakimu ke cermin $2$ m, dan jarak cermin ke dasar gedung $25$ m. Karena sudut datang = sudut pantul, dua segitiga siku-siku yang terbentuk sebangun (AA).',
+      ask: 'Berapa tinggi gedung?', unit: 'm', ans: 20,
+      explain: '$\\frac{t}{1{,}6} = \\frac{25}{2}$, sehingga $t = 1{,}6 \\times 12{,}5 = 20$ m.',
+      art: () => mirrorArt(1.6, 2, 25, 't = ?')
+    },
+    {
+      id: 'sungai-s', icon: 'map', title: 'Menaksir lebar sungai dengan segitiga sebangun',
+      text: 'Pohon $P$ berada di seberang, tepat berhadapan dengan titik $Q$. Dari $Q$ kamu berjalan menyusuri tepi $QR = 8$ m, lalu $RS = 4$ m. Dari $S$ kamu berjalan tegak lurus menjauhi sungai sampai titik $T$ yang segaris dengan $R$ dan $P$, dan $ST = 6$ m. Segitiga $PQR$ dan $TSR$ sebangun (AA: sudut siku-siku dan sudut bertolak belakang).',
+      ask: 'Berapa lebar sungai $PQ$?', unit: 'm', ans: 12,
+      explain: '$\\frac{PQ}{ST} = \\frac{QR}{SR}$, sehingga $\\frac{PQ}{6} = \\frac{8}{4} = 2$ dan $PQ = 12$ m.',
+      art: () => `<svg viewBox="0 0 300 262" role="img" aria-label="Lebar sungai dengan segitiga sebangun">
+        <rect x="0" y="34" width="300" height="128" fill="#BFDBFE"/>
+        <circle cx="40" cy="20" r="10" fill="#22C55E"/>
+        <path d="M40 26 L184 242" stroke="#17324D" stroke-width="2" stroke-dasharray="6 4"/>
+        <path d="M40 26 V170 H184 V242" fill="none" stroke="#2563EB" stroke-width="2.5"/>
+        <path d="M40 158 h12 v12 M184 182 h-12 v-12" fill="none" stroke="#2563EB" stroke-width="1.6"/>
+        <text class="v-label" x="22" y="30">P</text><text class="v-label" x="26" y="188">Q</text><text class="v-label" x="136" y="160" text-anchor="middle">R</text><text class="v-label" x="198" y="166">S</text><text class="v-label" x="198" y="246">T</text>
+        <text class="s-label" x="88" y="188" text-anchor="middle">8 m</text><text class="s-label" x="160" y="188" text-anchor="middle">4 m</text><text class="s-label" x="192" y="212">6 m</text><text class="s-label" x="30" y="100" text-anchor="end">?</text>
+      </svg>`
+    }
+  ];
+
+  function appGrid(list) {
+    return `<div class="grid grid-2">
+      ${list.map((a) => `<div class="card app-card" data-app="${a.id}">
         <div style="display:flex;gap:12px;align-items:center"><div class="icon-bubble">${GM.icon(a.icon, 22)}</div><h3 style="margin:0">${a.title}</h3></div>
         <div class="figure grid-bg">${a.art()}</div>
         <p>${GM.md(a.text)}</p>
@@ -838,16 +963,17 @@
     </div>`;
   }
 
-  function initPenerapan(panel) {
+  function initApps(panel, list) {
     const solved = GM.store.get().apps;
-    APPS.forEach((a) => {
+    list.forEach((a) => {
       const card = panel.querySelector(`[data-app="${a.id}"]`);
+      if (!card) return;
       const out = card.querySelector('.mini-result');
       const show = (right) => {
         out.innerHTML = right
           ? `<div class="feedback ok"><div class="f-ico">${GM.icon('check', 18, 3)}</div><div><strong>Benar!</strong>${GM.md(a.explain)}</div></div>`
-          : `<div class="feedback bad"><div class="f-ico">${GM.icon('x', 18, 3)}</div><div><strong>Belum tepat.</strong>Periksa kembali perbandingan sisi yang bersesuaian, lalu coba lagi.</div></div>`;
-        if (right) GM.store.update((s) => { s.apps[a.id] = true; });
+          : `<div class="feedback bad"><div class="f-ico">${GM.icon('x', 18, 3)}</div><div><strong>Belum tepat.</strong>Identifikasi dulu dua segitiga yang kongruen/sebangun dan pasangan sisi seletaknya, lalu coba lagi.</div></div>`;
+        if (right && !GM.store.get().apps[a.id]) GM.store.update((s) => { s.apps[a.id] = true; });
       };
       if (a.options) {
         card.querySelectorAll('[data-opt]').forEach((b) => b.addEventListener('click', () => show(+b.dataset.opt === a.ans)));
@@ -865,46 +991,288 @@
     });
   }
 
+  /* ============ Kerangka TP: kepala tab ============ */
+  const HOOK = {
+    1: 'Dua potongan kertas karton berbentuk segitiga tampak sama. Bagaimana cara membuktikan bahwa keduanya <b>sama persis</b> tanpa menebak dari pandangan mata?',
+    2: 'Dua daun pintu lemari harus dibuat sama persis agar bisa saling menggantikan. Apakah cukup mengukur panjang sisi-sisinya saja?',
+    3: 'Segitiga pada sebuah foto diperbesar. Bentuknya tetap sama, tetapi ukurannya berubah. Syarat matematis apa yang menjamin bentuknya tidak berubah?',
+    4: 'Saat foto diperbesar, mengapa gambar tidak tampak gepeng atau memanjang? Apa yang terjadi pada sudut dan sisi foto?',
+    5: 'Dua segitiga kongruen digambar dengan posisi terbalik. Bagaimana menemukan sisi dan sudut pasangannya (seletak) tanpa mengukur ulang?',
+    6: 'Satu dari dua bingkai jendela kembar rusak. Bagaimana memulihkan ukurannya hanya dari bingkai yang masih utuh?',
+    7: 'Model sebuah bangunan dibuat dengan skala tertentu. Jika satu ukuran diketahui, bagaimana menghitung ukuran lain yang hilang?',
+    8: 'Cetak biru taman memuat kolam besar yang sebangun dengan kolam kecil. Bagaimana menghitung sisi kolam besar yang terhapus?',
+    9: 'Kamu ingin mengetahui lebar sungai tanpa menyeberanginya. Bisakah segitiga kongruen membantu?',
+    10: 'Kamu ingin mengetahui tinggi pohon atau gedung tanpa memanjatnya. Bagaimana bayangan atau cermin dapat membantu?'
+  };
+  function tpHeader(n) {
+    const tp = GM.tpOf(n), st = GM.stageOf(tp.stage);
+    const hookTitle = st.id === 1 ? 'Masalah pemantik (konteks nyata)' : st.id === 2 ? 'Pertanyaan inkuiri' : 'Orientasi masalah';
+    return `<div class="card tp-card">
+      <div class="btn-row"><span class="chip chip-navy">TP ${n}</span><span class="chip">${st.name}</span>${st.atp.map((a) => `<span class="chip chip-mint" title="${GM.esc(a.text)}">${a.code}</span>`).join('')}</div>
+      <p class="tp-text"><b>Tujuan pembelajaran:</b> ${tp.text}</p>
+      <ol class="alur" aria-label="Alur belajar">${st.steps.map((x) => `<li>${x}</li>`).join('')}</ol>
+      <p class="small muted" style="margin:6px 0 0"><b>Pendekatan:</b> ${st.approach}</p>
+      <div class="callout warn" style="margin-bottom:0"><div class="callout-title">${GM.icon('bulb', 18)} ${hookTitle}</div><p>${HOOK[n]}</p></div>
+    </div>`;
+  }
+
+  /* ============ TP 2: KEKONGRUENAN SEGIEMPAT ============ */
+  function tabKongruenSegiempat() {
+    const rows = [
+      ['Persegi', 'panjang sisinya sama'],
+      ['Persegi panjang', 'panjang dan lebarnya sama'],
+      ['Jajargenjang', 'dua sisi yang berdekatan dan satu sudutnya sama'],
+      ['Belah ketupat', 'panjang sisi dan satu sudutnya sama'],
+      ['Layang-layang', 'sisi pendek, sisi panjang, dan sudut di antara kedua sisi pendek sama'],
+      ['Trapesium', 'semua sisi dan semua sudut bersesuaian sama']
+    ];
+    return `
+    <div class="card">
+      <h2>${GM.icon('square', 24)} Kekongruenan Segiempat</h2>
+      <p>Dua segiempat dikatakan <b>kongruen</b> jika memiliki bentuk dan ukuran yang sama persis. Syaratnya:</p>
+      <ol class="clean"><li>Keempat pasang sisi yang bersesuaian sama panjang.</li><li>Keempat pasang sudut yang bersesuaian sama besar.</li></ol>
+      ${F('ABCD \\cong PQRS \\iff AB = PQ,\\ BC = QR,\\ CD = RS,\\ DA = SP \\text{ dan } \\angle A = \\angle P,\\ \\angle B = \\angle Q,\\ \\angle C = \\angle R,\\ \\angle D = \\angle S')}
+      <div class="callout warn"><div class="callout-title">${GM.icon('bulb', 18)} Berbeda dengan segitiga</div><p>Pada segitiga, tiga sisi yang sama (SSS) sudah menjamin kongruen. Pada segiempat, <b>sisi yang sama belum cukup</b>: persegi dan belah ketupat bersisi sama bisa memiliki sudut berbeda. Karena itu sudut juga harus diperiksa.</p></div>
+    </div>
+    <div class="card">
+      <h3>Sifat kekongruenan segiempat</h3>
+      <div class="grid grid-2">
+        <ul class="info-list">
+          <li><span class="dot" style="background:var(--royal)"></span><div><b>Refleksif:</b> ${T('ABCD \\cong ABCD')}.</div></li>
+          <li><span class="dot" style="background:var(--royal)"></span><div><b>Simetris:</b> jika ${T('ABCD \\cong PQRS')} maka ${T('PQRS \\cong ABCD')}.</div></li>
+          <li><span class="dot" style="background:var(--royal)"></span><div><b>Transitif:</b> jika ${T('ABCD \\cong PQRS')} dan ${T('PQRS \\cong WXYZ')} maka ${T('ABCD \\cong WXYZ')}.</div></li>
+          <li><span class="dot" style="background:var(--royal)"></span><div><b>Bagian seletak sama:</b> jika sudah kongruen, setiap sisi dan sudut seletak berukuran sama.</div></li>
+          <li><span class="dot" style="background:var(--royal)"></span><div><b>Transformasi:</b> translasi, rotasi, dan refleksi menghasilkan segiempat yang kongruen dengan aslinya.</div></li>
+        </ul>
+        <div>
+          <h4>Syarat praktis dua segiempat sejenis kongruen</h4>
+          <div class="table-wrap"><table class="data compact"><tr><th>Bangun</th><th>Kongruen jika ...</th></tr>${rows.map((r) => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td></tr>`).join('')}</table></div>
+          <p class="small muted">Syarat praktis ini berlaku karena sifat khusus tiap bangun (misalnya sisi berhadapan jajargenjang sama panjang) menentukan unsur-unsur lainnya.</p>
+        </div>
+      </div>
+    </div>
+    ${demoHTML('tq', 'ATP 1 · Eksplorasi karton virtual: segiempat', `Jajargenjang biru adalah salinan jajargenjang abu-abu. Geser, putar, dan cerminkan sampai keduanya berimpit. Tabel menunjukkan keempat sisi dan keempat sudut selalu sama.`)}
+    <div class="card">
+      <h3>${GM.icon('search', 20)} Contoh dan bukan contoh</h3>
+      <div class="grid grid-2">
+        <div><div class="figure grid-bg" id="kq-1"></div><div class="callout bad"><div class="callout-title">Persegi vs belah ketupat (sisi 3 cm)</div><p>Keempat sisi sama panjang, tetapi ${T('90^\\circ \\neq 60^\\circ')}. <b>Tidak kongruen.</b></p></div></div>
+        <div><div class="figure grid-bg" id="kq-2"></div><div class="callout mint"><div class="callout-title">Diagonal jajargenjang</div><p>Diagonal ${T('AC')} membagi jajargenjang menjadi ${T('\\triangle ABC \\cong \\triangle CDA')} (SSS: ${T('AB = CD')}, ${T('BC = DA')}, ${T('AC')} bersama). Inilah alasan sisi dan sudut yang berhadapan pada jajargenjang sama.</p></div></div>
+      </div>
+    </div>`;
+  }
+  function initKongruenSegiempat(panel) {
+    initDemo(panel, 'tq', { orig: geo.translate(geo.quad('jajargenjang', { a: 5, b: 3, t: 60 }), 1.5, 1.5), labels: ['A', 'B', 'C', 'D'] });
+    GM.svg.mount(panel.querySelector('#kq-1'), () => ({ shapes: [
+      { pts: geo.quad('persegi', { s: 3 }), labels: ['A', 'B', 'C', 'D'], sideLabels: true, angleLabels: true, color: 'a' },
+      { pts: geo.quad('belahketupat', { s: 3, t: 60 }), labels: ['P', 'Q', 'R', 'S'], sideLabels: true, angleLabels: true, color: 'b' }
+    ], opts: { pairs: true } }), { aspect: 0.5, maxWidth: 560 });
+    const J = geo.quad('jajargenjang', { a: 6, b: 3.5, t: 60 });
+    GM.svg.mount(panel.querySelector('#kq-2'), () => ({
+      shapes: [{ pts: J, labels: ['A', 'B', 'C', 'D'], sideMarks: [1, 2, 1, 2], color: 'a' }],
+      opts: { extra: (maps) => { const a = maps[0](J[0]), c = maps[0](J[2]); return `<line x1="${a[0]}" y1="${a[1]}" x2="${c[0]}" y2="${c[1]}" stroke="#0F9D58" stroke-width="2.5" stroke-dasharray="7 5"/>`; } }
+    }), { aspect: 0.45, maxWidth: 560 });
+  }
+
+  /* ============ TP 5–8: MENENTUKAN UKURAN ============ */
+  function langkahSeletak(rel) {
+    return `<div class="card">
+      <h3>${GM.icon('search', 20)} Langkah menemukan unsur seletak (ATP ${rel === 'cong' ? 3 : 4})</h3>
+      <ol class="steps-list" style="padding:0;list-style:none">
+        <li class="step-item"><div class="step-num"></div><div><b>Baca notasi.</b> Urutan huruf menunjukkan pasangan titik. Contoh ${T(rel === 'cong' ? '\\triangle ABC \\cong \\triangle QRP' : '\\triangle ABC \\sim \\triangle QRP')} berarti ${T('A \\leftrightarrow Q')}, ${T('B \\leftrightarrow R')}, ${T('C \\leftrightarrow P')}.</div></li>
+        <li class="step-item"><div class="step-num"></div><div><b>Pasangkan sisi dan sudut seletak.</b> Sisi ${T('AB \\leftrightarrow QR')}, ${T('BC \\leftrightarrow RP')}, ${T('CA \\leftrightarrow PQ')}; sudut ${T('\\angle A \\leftrightarrow \\angle Q')} dan seterusnya. Nyalakan <b>Bantuan warna</b>: unsur seletak berwarna sama.</div></li>
+        <li class="step-item"><div class="step-num"></div><div>${rel === 'cong'
+          ? '<b>Samakan ukurannya.</b> Sisi seletak sama panjang dan sudut seletak sama besar. Jika ada variabel, susun persamaan lalu selesaikan.'
+          : '<b>Susun perbandingan senilai.</b> Sisi seletak sebanding: $\\frac{\\text{sisi kedua}}{\\text{sisi pertama}} = k$. Sudut seletak <b>sama besar</b> (tidak dikalikan $k$).'.replace(/\$([^$]+)\$/g, (m, x) => T(x))}</div></li>
+        <li class="step-item"><div class="step-num"></div><div><b>Periksa kembali.</b> Jumlah sudut segitiga ${T('180^\\circ')}, jumlah sudut segiempat ${T('360^\\circ')}, dan semua rasio sisi harus sama.</div></li>
+      </ol>
+    </div>`;
+  }
+  function practiceCard(tp) {
+    return `<div class="card"><h3>${GM.icon('target', 20)} Latihan Seletak (soal acak tanpa batas)</h3>
+      <p class="muted small">Setiap kali kamu menekan "Soal baru", bangun, ukuran, dan urutan notasi berubah. Gunakan bantuan warna bila perlu, lalu coba matikan untuk menguji dirimu (pembelajaran berdiferensiasi).</p>
+      <div id="practice-${tp}"></div></div>`;
+  }
+  function example(title, body, steps) {
+    return `<div class="card"><h3>${GM.icon('book', 20)} ${title}</h3><p>${GM.md(body)}</p>
+      <ol class="explain-steps">${steps.map((s, i) => `<li><span class="es-n">${i + 1}</span><div class="es-body">${GM.md(s)}</div></li>`).join('')}</ol></div>`;
+  }
+  function geogebraLink() {
+    return `<div class="callout"><div class="callout-title">${GM.icon('flask', 18)} Media GeoGebra</div><p>Untuk menyelidiki lebih jauh, buka <a href="#/lab/geogebra">Media GeoGebra di Laboratorium</a> atau <a href="#/lab/kongruensi">Deteksi Kongruensi</a> dan <a href="#/lab/kesebangunan">Deteksi Kesebangunan</a>.</p></div>`;
+  }
+
+  function tabUkuranKongruenSegitiga() {
+    return `<div class="card"><h2>${GM.icon('triangle', 24)} Menentukan Sisi dan Sudut pada Segitiga Kongruen</h2>
+      <p>Jika dua segitiga sudah diketahui kongruen, setiap sisi dan sudut yang <b>seletak</b> (bersesuaian) memiliki ukuran yang sama. Kuncinya adalah menemukan pasangan seletak dengan tepat.</p>${geogebraLink()}</div>
+      ${langkahSeletak('cong')}
+      ${example('Contoh: menentukan nilai variabel', '$\\triangle ABC \\cong \\triangle PQR$ dengan $AB = 9$ cm, $PQ = (2x + 3)$ cm, $\\angle C = 70^\\circ$, dan $\\angle R = (5y - 10)^\\circ$. Tentukan $x$ dan $y$.', [
+        'Dari notasi: $A \\leftrightarrow P$, $B \\leftrightarrow Q$, $C \\leftrightarrow R$. Jadi $PQ$ seletak dengan $AB$, dan $\\angle R$ seletak dengan $\\angle C$.',
+        '$2x + 3 = 9 \\Rightarrow 2x = 6 \\Rightarrow x = 3$.',
+        '$5y - 10 = 70 \\Rightarrow 5y = 80 \\Rightarrow y = 16$.'
+      ])}
+      ${practiceCard(5)}`;
+  }
+  function tabUkuranKongruenSegiempat() {
+    return `<div class="card"><h2>${GM.icon('square', 24)} Menentukan Sisi dan Sudut pada Segiempat Kongruen</h2>
+      <p>Pada dua segiempat kongruen, keempat sisi seletak sama panjang dan keempat sudut seletak sama besar. Sering kali kita juga memerlukan <b>sifat khusus bangunnya</b> (misalnya sisi berhadapan jajargenjang sama panjang) dan jumlah sudut segiempat ${T('360^\\circ')}.</p>${geogebraLink()}</div>
+      ${langkahSeletak('cong')}
+      ${example('Contoh: layang-layang kongruen', 'Layang-layang $ABCD \\cong$ layang-layang $KLMN$ dengan $AB = AD = 5$ cm, $BC = CD = 9$ cm, dan $\\angle ABC = 110^\\circ$. Tentukan $LM$ dan $\\angle N$.', [
+        'Dari notasi: $A \\leftrightarrow K$, $B \\leftrightarrow L$, $C \\leftrightarrow M$, $D \\leftrightarrow N$. Jadi $LM \\leftrightarrow BC$ dan $\\angle N \\leftrightarrow \\angle D$.',
+        '$LM = BC = 9$ cm.',
+        'Sifat layang-layang: diagonal $AC$ membagi menjadi $\\triangle ABC \\cong \\triangle ADC$ (SSS), sehingga $\\angle ADC = \\angle ABC = 110^\\circ$.',
+        'Jadi $\\angle N = \\angle D = 110^\\circ$.'
+      ])}
+      ${practiceCard(6)}`;
+  }
+  function tabUkuranSebangunSegitiga() {
+    return `<div class="card"><h2>${GM.icon('scale', 24)} Menentukan Sisi dan Sudut pada Segitiga Sebangun</h2>
+      <p>Pada dua segitiga sebangun, sudut seletak <b>sama besar</b>, sedangkan sisi seletak <b>sebanding</b>. Panjang sisi yang hilang dicari dengan persamaan perbandingan senilai.</p>
+      ${F('\\frac{PQ}{AB} = \\frac{QR}{BC} = \\frac{RP}{CA} = k')}${geogebraLink()}</div>
+      ${langkahSeletak('sim')}
+      ${example('Contoh: perbandingan senilai', '$\\triangle ABC \\sim \\triangle DEF$ dengan $AB = 8$ cm, $BC = 10$ cm, $DE = 12$ cm, dan $\\angle B = 65^\\circ$. Tentukan $EF$ dan $\\angle E$.', [
+        'Pasangan seletak: $AB \\leftrightarrow DE$, $BC \\leftrightarrow EF$, $\\angle B \\leftrightarrow \\angle E$.',
+        'Perbandingan senilai: $\\frac{EF}{10} = \\frac{12}{8}$, sehingga $8 \\cdot EF = 120$ dan $EF = 15$ cm.',
+        'Sudut seletak sama besar: $\\angle E = \\angle B = 65^\\circ$.'
+      ])}
+      ${practiceCard(7)}
+      ${tabTeorema()}`;
+  }
+  function tabUkuranSebangunSegiempat() {
+    return `<div class="card"><h2>${GM.icon('scale', 24)} Menentukan Sisi dan Sudut pada Segiempat Sebangun</h2>
+      <p>Pada dua segiempat sebangun, keempat sudut seletak sama besar dan keempat sisi seletak sebanding dengan faktor skala yang sama.</p>
+      ${F('\\frac{PQ}{AB} = \\frac{QR}{BC} = \\frac{RS}{CD} = \\frac{SP}{DA} = k')}${geogebraLink()}</div>
+      ${langkahSeletak('sim')}
+      ${example('Contoh: persegi panjang sebangun', 'Persegi panjang $ABCD \\sim$ persegi panjang $PQRS$ dengan $AB = 12$ cm, $BC = 8$ cm, dan $QR = 6$ cm. Tentukan $PQ$ dan $\\angle R$.', [
+        'Pasangan seletak: $AB \\leftrightarrow PQ$, $BC \\leftrightarrow QR$, $\\angle C \\leftrightarrow \\angle R$.',
+        'Faktor skala: $k = \\frac{QR}{BC} = \\frac{6}{8} = 0{,}75$ (pengecilan).',
+        '$PQ = 0{,}75 \\times 12 = 9$ cm, dan $\\angle R = \\angle C = 90^\\circ$.'
+      ])}
+      ${practiceCard(8)}
+      ${teoremaSegiempat()}`;
+  }
+
+  /* ============ TP 9–10: MASALAH KONTEKSTUAL ============ */
+  function pblSteps() {
+    return `<div class="card"><h3>${GM.icon('compass', 20)} Langkah Problem-Based Learning</h3>
+      <div class="grid grid-3">
+        <div class="callout"><div class="callout-title">1. Pahami masalah</div><p>Apa yang ditanyakan? Ukuran apa yang tidak bisa diukur langsung?</p></div>
+        <div class="callout"><div class="callout-title">2. Temukan segitiga</div><p>Gambar sketsa. Cari dua segitiga yang kongruen atau sebangun dan sebutkan alasannya (SSS, SAS, ASA, AAS, RHS, atau AA).</p></div>
+        <div class="callout"><div class="callout-title">3. Hitung dan periksa</div><p>Pasangkan sisi seletak, hitung, lalu nilai apakah jawabannya masuk akal.</p></div>
+      </div></div>`;
+  }
+  function tabMasalahKongruen() {
+    return `<div class="card"><h2>${GM.icon('map', 24)} Masalah Kontekstual Kekongruenan</h2>
+      <p>Kekongruenan membantu kita mengetahui ukuran yang sulit diukur langsung: cukup ukur bagian yang kongruen dengannya.</p></div>
+      ${pblSteps()}
+      ${appGrid(APPS_K.concat(APPS.filter((a) => a.id === 'motif')))}`;
+  }
+  function initMasalahKongruen(panel) { initApps(panel, APPS_K.concat(APPS)); }
+
+  function tabMasalahSebangun() {
+    return `<div class="card"><h2>${GM.icon('map', 24)} Masalah Kontekstual Kesebangunan</h2>
+      <p>Pengukuran tak langsung (tinggi pohon, gedung, atau lebar sungai) memakai dua segitiga sebangun: satu dapat diukur, satu lagi berisi ukuran yang dicari.</p></div>
+      ${pblSteps()}
+      ${appGrid(APPS.filter((a) => a.id === 'pohon').concat(APPS_S, APPS.filter((a) => ['peta', 'foto', 'ubin', 'denah'].includes(a.id))))}
+      <div class="card">
+        <h3>${GM.icon('ruler', 20)} Proyek Mini (PjBL): ukur tinggi benda di sekitarmu</h3>
+        <p class="muted small">Pilih metode, ukur dengan meteran bersama teman, masukkan hasilnya, lalu salin laporan untuk dipresentasikan.</p>
+        <div class="grid grid-2">
+          <div>
+            <div class="control"><label for="pj-m">Metode</label><select id="pj-m"><option value="bayangan">Bayangan (siang hari)</option><option value="cermin">Cermin datar di tanah</option></select></div>
+            <div class="control"><label for="pj-obj">Benda yang diukur</label><input type="text" id="pj-obj" value="tiang bendera sekolah"></div>
+            <div class="control"><label for="pj-a" id="pj-la">Tinggi tongkat (m)</label><input type="text" inputmode="decimal" id="pj-a" value="1,5"></div>
+            <div class="control"><label for="pj-b" id="pj-lb">Panjang bayangan tongkat (m)</label><input type="text" inputmode="decimal" id="pj-b" value="2"></div>
+            <div class="control"><label for="pj-c" id="pj-lc">Panjang bayangan benda (m)</label><input type="text" inputmode="decimal" id="pj-c" value="10"></div>
+          </div>
+          <div><div id="pj-out"></div>
+            <label class="small muted" for="pj-report">Laporan proyek (dapat diedit dan disalin):</label>
+            <textarea id="pj-report" rows="8"></textarea>
+            <div class="btn-row" style="margin-top:8px"><button class="btn btn-outline btn-sm" id="pj-copy">${GM.icon('copy', 16)} Salin laporan</button><span class="small muted" id="pj-msg"></span></div>
+          </div>
+        </div>
+      </div>`;
+  }
+  function initMasalahSebangun(panel) {
+    initApps(panel, APPS.concat(APPS_S));
+    const $ = (id) => panel.querySelector('#' + id);
+    const LBL = {
+      bayangan: ['Tinggi tongkat (m)', 'Panjang bayangan tongkat (m)', 'Panjang bayangan benda (m)'],
+      cermin: ['Tinggi mata (m)', 'Jarak kaki ke cermin (m)', 'Jarak cermin ke dasar benda (m)']
+    };
+    function calc() {
+      const m = $('pj-m').value;
+      [$('pj-la'), $('pj-lb'), $('pj-lc')].forEach((el, i) => (el.textContent = LBL[m][i]));
+      const a = GM.parseNum($('pj-a').value), b = GM.parseNum($('pj-b').value), c = GM.parseNum($('pj-c').value);
+      if (!(a > 0 && b > 0 && c > 0)) { $('pj-out').innerHTML = `<div class="feedback info"><div class="f-ico">${GM.icon('bulb', 18)}</div><div>Isi ketiga ukuran dengan angka positif.</div></div>`; return; }
+      const t = (a * c) / b;
+      const obj = $('pj-obj').value.trim() || 'benda';
+      const x = (v) => GM.fmtTex(v, 2);
+      $('pj-out').innerHTML = GM.formula(`\\frac{t}{${x(a)}} = \\frac{${x(c)}}{${x(b)}} \\Rightarrow t = \\frac{${x(a)} \\times ${x(c)}}{${x(b)}} \\approx ${x(t)}\\text{ m}`);
+      $('pj-report').value = [
+        `Laporan Proyek Mini: Mengukur tinggi ${obj}`,
+        `Metode: ${m === 'bayangan' ? 'bayangan matahari' : 'cermin datar'}`,
+        `Data: ${LBL[m][0]} = ${f(a, 2)}; ${LBL[m][1]} = ${f(b, 2)}; ${LBL[m][2]} = ${f(c, 2)}.`,
+        m === 'bayangan'
+          ? 'Alasan: tongkat dan benda tegak lurus tanah dan sinar matahari datang dengan sudut yang sama, sehingga kedua segitiga sebangun (AA).'
+          : 'Alasan: mata dan benda tegak lurus tanah dan sudut datang sama dengan sudut pantul, sehingga kedua segitiga sebangun (AA).',
+        `Perhitungan: t = ${f(a, 2)} x ${f(c, 2)} : ${f(b, 2)} = ${f(t, 2)} m.`,
+        `Kesimpulan: tinggi ${obj} kira-kira ${f(t, 2)} m.`,
+        'Evaluasi: sebutkan sumber kesalahan pengukuran (misalnya tongkat tidak tegak, tanah tidak datar, atau batas bayangan sulit ditentukan).'
+      ].join('\n');
+    }
+    ['pj-m', 'pj-a', 'pj-b', 'pj-c', 'pj-obj'].forEach((id) => $(id).addEventListener('input', calc));
+    $('pj-m').addEventListener('change', calc);
+    $('pj-copy').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText($('pj-report').value); $('pj-msg').textContent = 'Laporan disalin.'; }
+      catch (e) { $('pj-report').select(); $('pj-msg').textContent = 'Tekan Ctrl+C (atau salin manual) untuk menyalin.'; }
+    });
+    calc();
+  }
+
   /* ============ Halaman ============ */
   const RENDER = {
-    kongruensi: [tabKongruensi, initKongruensi],
-    'syarat-kongruen': [tabSyaratKongruen, initSyaratKongruen],
-    sifat: [tabSifat, initSifat],
-    kesebangunan: [tabKesebangunan, initKesebangunan],
-    'syarat-sebangun': [tabSyaratSebangun, initSyaratSebangun],
-    segiempat: [tabSegiempat, initSegiempat],
-    teorema: [tabTeorema, initTeorema],
-    penerapan: [tabPenerapan, initPenerapan]
+    'kongruen-segitiga': [() => tabKongruensi() + tabSyaratKongruen() + tabSifat(), (p) => { initKongruensi(p); initSyaratKongruen(p); initSifat(p); }],
+    'kongruen-segiempat': [tabKongruenSegiempat, initKongruenSegiempat],
+    'sebangun-segitiga': [() => tabKesebangunan() + tabSyaratSebangun() + `<div class="card"><p>${GM.icon('flask', 18)} Ingin melihat segitiga diperbesar dan diperkecil secara langsung (ATP 2)? Buka <a href="#/lab/kesebangunan">Deteksi Kesebangunan</a> di Laboratorium.</p></div>`, initSyaratSebangun],
+    'sebangun-segiempat': [() => fotoExperiment() + tabSegiempat(), (p) => { initKesebangunan(p); initSegiempat(p); }],
+    'ukuran-kongruen-segitiga': [tabUkuranKongruenSegitiga, (p) => GM.Practice.mount(p.querySelector('#practice-5'), 5)],
+    'ukuran-kongruen-segiempat': [tabUkuranKongruenSegiempat, (p) => GM.Practice.mount(p.querySelector('#practice-6'), 6)],
+    'ukuran-sebangun-segitiga': [tabUkuranSebangunSegitiga, (p) => { GM.Practice.mount(p.querySelector('#practice-7'), 7); initTeorema(p); }],
+    'ukuran-sebangun-segiempat': [tabUkuranSebangunSegiempat, (p) => { GM.Practice.mount(p.querySelector('#practice-8'), 8); initTeorema(p); }],
+    'masalah-kongruen': [tabMasalahKongruen, initMasalahKongruen],
+    'masalah-sebangun': [tabMasalahSebangun, initMasalahSebangun]
   };
 
   function render(el, params) {
-    let tab = params[0] && RENDER[params[0]] ? params[0] : 'kongruensi';
+    const tab = params[0] && RENDER[params[0]] ? params[0] : TABS[0].id;
     GM.store.update((s) => { s.material[tab] = true; });
     const visited = GM.store.get().material;
     const idx = TABS.findIndex((t) => t.id === tab);
     const done = TABS.filter((t) => visited[t.id]).length;
     const prev = TABS[idx - 1], next = TABS[idx + 1];
+    const tp = TABS[idx].tp;
+    const group = GM.CURRICULUM.stages.map((st) => `<div class="tab-group">${st.short}</div>` +
+      TABS.filter((t) => GM.tpOf(t.tp).stage === st.id).map((t) => `<a class="tab-btn ${t.id === tab ? 'active' : ''} ${visited[t.id] ? 'visited' : ''}" href="#/materi/${t.id}" role="tab" aria-selected="${t.id === tab}" style="text-decoration:none"><span class="t-num">${t.tp}</span><span>${t.title}</span><span class="t-check">${GM.icon('check', 16, 3)}</span></a>`).join('')).join('');
 
     el.innerHTML = `<div class="container page">
       <div class="page-head">
         <span class="eyebrow">${GM.icon('book', 14)} Materi Pembelajaran</span>
         <h1>Berkas Materi Detektif</h1>
-        <p>Pelajari konsep kekongruenan dan kesebangunan langkah demi langkah. Setiap topik dilengkapi ilustrasi yang dapat kamu manipulasi.</p>
+        <p>Materi disusun mengikuti 10 Tujuan Pembelajaran (TP) dalam tiga tahap: memahami konsep, menentukan ukuran, dan memecahkan masalah. Nomor pada daftar topik adalah nomor TP. <a href="#/tujuan">Lihat CP, TP, dan ATP lengkap</a>.</p>
       </div>
       <div class="with-sidebar">
         <aside class="sidebar" aria-label="Daftar topik materi">
-          <h4>Topik materi</h4>
-          <div class="tab-list" role="tablist">
-            ${TABS.map((t, i) => `<a class="tab-btn ${t.id === tab ? 'active' : ''} ${visited[t.id] ? 'visited' : ''}" href="#/materi/${t.id}" role="tab" aria-selected="${t.id === tab}" style="text-decoration:none"><span class="t-num">${i + 1}</span><span>${t.title}</span><span class="t-check">${GM.icon('check', 16, 3)}</span></a>`).join('')}
-          </div>
+          <h4>Topik per TP</h4>
+          <div class="tab-list" role="tablist">${group}</div>
           <div class="progress" aria-label="Progres materi"><span style="width:${(done / TABS.length) * 100}%"></span></div>
           <div class="side-foot">${done} dari ${TABS.length} topik sudah dibuka</div>
         </aside>
         <section class="tab-panel" id="tab-panel" role="tabpanel" aria-label="${TABS[idx].title}">
+          ${tpHeader(tp)}
           ${RENDER[tab][0]()}
+          <div class="card" style="text-align:center"><p style="margin-bottom:10px">Uji pemahaman TP ${tp} di kasus yang sesuai:</p><a class="btn btn-mint" href="#/misi/${GM.tpOf(tp).mission}">${GM.icon('target', 18)} Kasus ${GM.tpOf(tp).mission}: ${GM.MISSIONS[GM.tpOf(tp).mission - 1].title}</a></div>
           <div class="tab-nav">
-            ${prev ? `<a class="btn btn-outline" href="#/materi/${prev.id}">${GM.icon('left', 18)} ${prev.title}</a>` : '<span></span>'}
-            ${next ? `<a class="btn btn-primary" href="#/materi/${next.id}">${next.title} ${GM.icon('right', 18)}</a>` : `<a class="btn btn-mint" href="#/misi">${GM.icon('target', 18)} Uji di Misi Detektif</a>`}
+            ${prev ? `<a class="btn btn-outline" href="#/materi/${prev.id}">${GM.icon('left', 18)} TP ${prev.tp}: ${prev.title}</a>` : '<span></span>'}
+            ${next ? `<a class="btn btn-primary" href="#/materi/${next.id}">TP ${next.tp}: ${next.title} ${GM.icon('right', 18)}</a>` : `<a class="btn btn-mint" href="#/evaluasi">${GM.icon('clipboard', 18)} Kerjakan Evaluasi</a>`}
           </div>
         </section>
       </div>

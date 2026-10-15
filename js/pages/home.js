@@ -47,7 +47,7 @@
   function render(el) {
     const st = GM.store.missionStats();
     const s = GM.store.get();
-    const matDone = Object.keys(s.material).length;
+    const matDone = GM.MaterialPage.TABS.filter((t) => s.material[t.id]).length;
     const quiz = s.quiz.result;
     const badges = GM.store.BADGES.map((b) => {
       const got = s.badges.includes(b.id);
@@ -63,7 +63,7 @@
           <p class="hero-sub">Amati bangun, temukan petunjuk, dan pecahkan misteri kekongruenan serta kesebangunan.</p>
           <div class="btn-row">
             <a class="btn btn-mint btn-lg" href="#/misi">${GM.icon('play', 18)} Mulai Investigasi</a>
-            <a class="btn btn-ghost-light btn-lg" href="#/materi/kongruensi">${GM.icon('book', 18)} Pelajari Materi</a>
+            <a class="btn btn-ghost-light btn-lg" href="#/materi/kongruen-segitiga">${GM.icon('book', 18)} Pelajari Materi</a>
             <a class="btn btn-ghost-light btn-lg" href="#/petunjuk">${GM.icon('help', 18)} Lihat Petunjuk</a>
           </div>
         </div>
@@ -75,7 +75,7 @@
       <div class="card grid grid-4">
         <div class="stat"><div class="icon-bubble">${GM.icon('book', 22)}</div><div><div class="stat-label">Materi</div><div class="stat-value">Kekongruenan & Kesebangunan</div></div></div>
         <div class="stat"><div class="icon-bubble mint">${GM.icon('hat', 22)}</div><div><div class="stat-label">Kelas</div><div class="stat-value">IX SMP</div></div></div>
-        <div class="stat"><div class="icon-bubble">${GM.icon('target', 22)}</div><div><div class="stat-label">Jumlah misi</div><div class="stat-value">5 kasus utama</div></div></div>
+        <div class="stat"><div class="icon-bubble">${GM.icon('target', 22)}</div><div><div class="stat-label">Jumlah misi</div><div class="stat-value">10 kasus (10 TP)</div></div></div>
         <div class="stat"><div class="icon-bubble mint">${GM.icon('star', 22)}</div><div><div class="stat-label">Sistem skor</div><div class="stat-value">100 poin</div></div></div>
       </div>
     </div>
@@ -88,8 +88,8 @@
             <p class="muted">Progres tersimpan otomatis di perangkat ini, jadi kamu bisa melanjutkan kapan saja.</p>
             <div class="progress-label"><span>Kasus terpecahkan</span><span>${st.completed}/${st.total}</span></div>
             <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${st.total}" aria-valuenow="${st.completed}"><span style="width:${(st.completed / st.total) * 100}%"></span></div>
-            <div class="progress-label" style="margin-top:14px"><span>Materi dibuka</span><span>${matDone}/8</span></div>
-            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="${matDone}"><span style="width:${(matDone / 8) * 100}%"></span></div>
+            <div class="progress-label" style="margin-top:14px"><span>Materi (TP) dibuka</span><span>${matDone}/10</span></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${matDone}"><span style="width:${(matDone / 10) * 100}%"></span></div>
             <div class="btn-row" style="margin-top:16px">
               <span class="chip">${GM.icon('star', 14)} Skor misi: ${st.score}/100</span>
               <span class="chip chip-mint">${GM.icon('clipboard', 14)} Evaluasi: ${quiz ? quiz.mcScore + '/100' : 'belum dikerjakan'}</span>
@@ -103,11 +103,20 @@
       </section>
 
       <section class="section">
+        <div class="section-title"><div><h2 style="margin:0">Peta Tujuan Pembelajaran</h2><p class="muted" style="margin:0">CP Fase D: ${GM.CURRICULUM.cp}</p></div><a class="btn btn-outline btn-sm" href="#/tujuan">${GM.icon('flag', 16)} Lihat TP & ATP lengkap</a></div>
+        <div class="grid grid-3">
+          ${GM.CURRICULUM.stages.map((st) => `<div class="card card-hover"><span class="chip chip-navy">${st.name}</span>
+            <ul class="clean small" style="margin-top:10px">${st.tps.map((n) => `<li><a href="#/materi/${GM.tpOf(n).tab}"><b>TP ${n}</b></a> ${GM.tpOf(n).text.replace('Peserta didik mampu ', '')}</li>`).join('')}</ul>
+            <p class="small muted" style="margin:0"><b>Pendekatan:</b> ${st.approach}</p></div>`).join('')}
+        </div>
+      </section>
+
+      <section class="section">
         <div class="section-title"><div><h2 style="margin:0">Peralatan Detektif</h2><p class="muted" style="margin:0">Semua fitur saling terhubung: pelajari, uji di laboratorium, lalu pecahkan kasus.</p></div></div>
         <div class="grid grid-3">
-          ${feature('book', 'Materi Interaktif', '8 topik: kekongruenan, syarat SSS/SAS/ASA/AAS/RHS, kesebangunan, AA, segiempat, Teorema Thales, dan penerapannya.', '#/materi/kongruensi', 'Buka materi')}
+          ${feature('book', 'Materi Interaktif', '10 topik sesuai TP 1–10: sifat kongruen/sebangun segitiga dan segiempat, menentukan sisi dan sudut seletak, hingga masalah kontekstual.', '#/materi/kongruen-segitiga', 'Buka materi')}
           ${feature('flask', 'Laboratorium Geometri', 'Geser titik sudut, putar, cerminkan, dan ubah faktor skala. Status kongruen/sebangun dihitung dari ukuran.', '#/lab/kongruensi', 'Masuk laboratorium')}
-          ${feature('target', 'Misi Detektif', '5 kasus utama dengan petunjuk, umpan balik otomatis, pembahasan bertahap, poin, dan badge.', '#/misi', 'Mulai misi')}
+          ${feature('target', 'Misi Detektif', '10 kasus, satu untuk setiap Tujuan Pembelajaran, dengan petunjuk, umpan balik otomatis, pembahasan bertahap, poin, dan badge.', '#/misi', 'Mulai misi')}
           ${feature('clipboard', 'Evaluasi', '10 soal pilihan ganda dan 5 soal uraian bertingkat (mudah, sedang, sulit) dengan timer opsional.', '#/evaluasi', 'Kerjakan evaluasi')}
           ${feature('trophy', 'Hasil Investigasi', 'Lihat skor akhir, persentase keberhasilan, badge, dan rekomendasi materi yang perlu diulang.', '#/hasil', 'Lihat hasil')}
           ${feature('help', 'Petunjuk Permainan', 'Pelajari aturan main dan sistem skor sebelum memulai investigasi pertamamu.', '#/petunjuk', 'Baca petunjuk')}

@@ -105,6 +105,7 @@
     shuffle: '<path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>',
     send: '<path d="M4 12l16-8-6 16-2.5-6.5z"/>',
     layers: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+    flag: '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
     compass: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>'
   };
   GM.icon = function (name, size = 20, sw = 2) {
@@ -158,6 +159,22 @@
     lastW = window.innerWidth;
     clearTimeout(rt);
     rt = setTimeout(() => redraws.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } }), 120);
+  });
+
+  GM.redrawAll = function () { redraws.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } }); };
+
+  /* ---------- Bantuan warna (pembelajaran berdiferensiasi) ---------- */
+  GM.colorHelp = () => !!(GM.store && GM.store.get().settings && GM.store.get().settings.colorHelp);
+  GM.colorToggle = function () {
+    return `<label class="switch color-toggle" title="Pasangan sisi/sudut seletak diberi warna yang sama"><input type="checkbox" data-color-toggle ${GM.colorHelp() ? 'checked' : ''}> Bantuan warna (sisi &amp; sudut seletak)</label>`;
+  };
+  // Satu pendengar global untuk semua sakelar bantuan warna.
+  document.addEventListener('change', (e) => {
+    const t = e.target.closest && e.target.closest('[data-color-toggle]');
+    if (!t) return;
+    GM.store.update((s) => { s.settings.colorHelp = t.checked; });
+    document.querySelectorAll('[data-color-toggle]').forEach((x) => { x.checked = t.checked; });
+    GM.redrawAll();
   });
 
   GM.go = function (hash) { if (location.hash === hash) window.dispatchEvent(new HashChangeEvent('hashchange')); else location.hash = hash; };

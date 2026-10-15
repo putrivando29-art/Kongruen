@@ -1,14 +1,14 @@
 /* Penyimpanan progres belajar di localStorage. */
 (function () {
   const GM = window.GM;
-  const KEY = 'geomatch.progress.v1';
-  const MISSION_COUNT = 5;
-  const POINTS = 20;
+  const KEY = 'geomatch.progress.v2'; // v2: struktur 10 kasus sesuai 10 TP
+  const MISSION_COUNT = 10;
+  const POINTS = 10;
 
   const BADGES = [
     { id: 'pemula', name: 'Detektif Pemula', need: 1, desc: 'Menyelesaikan 1 kasus', icon: 'search' },
     { id: 'analis', name: 'Analis Geometri', need: 3, desc: 'Menyelesaikan 3 kasus', icon: 'compass' },
-    { id: 'master', name: 'Master GeoMatch', need: 5, desc: 'Menyelesaikan seluruh kasus', icon: 'trophy' }
+    { id: 'master', name: 'Master GeoMatch', need: 10, desc: 'Menyelesaikan seluruh kasus', icon: 'trophy' }
   ];
 
   function defaults() {
@@ -18,6 +18,8 @@
       material: {},        // tab yang sudah dibuka
       lab: {},             // tantangan laboratorium yang sudah tercapai
       apps: {},            // soal penerapan yang sudah dijawab benar
+      practice: {},        // { [tp]: jumlah soal latihan seletak yang dijawab benar }
+      settings: { colorHelp: true },
       quiz: { answers: {}, essays: {}, finals: {}, submitted: false, result: null, timer: false, startedAt: null, remaining: null },
       quizHistory: [],
       badges: [],
@@ -37,6 +39,7 @@
         const d = defaults();
         state = Object.assign(d, data);
         state.quiz = Object.assign(defaults().quiz, data.quiz || {});
+        state.settings = Object.assign(defaults().settings, data.settings || {});
       }
     } catch (e) {
       storageOk = false;

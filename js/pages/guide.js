@@ -29,9 +29,9 @@
           <div class="card">
             <h2>${GM.icon('star', 22)} Sistem Skor</h2>
             <table class="score-table">
-              <tr><td>Jawaban benar (percobaan pertama)</td><td style="color:var(--ok)">20 poin</td></tr>
+              <tr><td>Jawaban benar (percobaan pertama)</td><td style="color:var(--ok)">10 poin</td></tr>
               <tr><td>Jawaban salah</td><td style="color:var(--bad)">0 poin</td></tr>
-              <tr><td>Jumlah kasus</td><td>5 kasus</td></tr>
+              <tr><td>Jumlah kasus</td><td>10 kasus (1 kasus per TP)</td></tr>
               <tr><td>Skor maksimal</td><td>100 poin</td></tr>
             </table>
             <div class="callout warn" style="margin-top:16px">
@@ -55,7 +55,7 @@
           </div>
           <div class="btn-row" style="margin-top:18px">
             <a class="btn btn-primary btn-lg" href="#/misi">${GM.icon('play', 18)} Mulai Misi</a>
-            <a class="btn btn-outline" href="#/materi/kongruensi">${GM.icon('book', 18)} Pelajari Materi dulu</a>
+            <a class="btn btn-outline" href="#/materi/kongruen-segitiga">${GM.icon('book', 18)} Pelajari Materi dulu</a>
           </div>
         </div>
       </div>

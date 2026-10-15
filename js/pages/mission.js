@@ -1,4 +1,4 @@
-/* Game utama: Misi Detektif (5 kasus) */
+/* Game utama: Misi Detektif (10 kasus, satu per TP) */
 (function () {
   const GM = window.GM;
 
@@ -22,13 +22,13 @@
         </div>
       </div>
       <div class="case-steps" role="tablist" aria-label="Daftar kasus">
-        ${GM.MISSIONS.map((m) => {
+        ${GM.CURRICULUM.stages.map((st) => `<div class="case-group"><span class="cg-label">${st.short}</span>` + GM.MISSIONS.filter((m) => GM.tpOf(m.tp).stage === st.id).map((m) => {
           const d = s.missions[m.id] || {};
           const unlocked = GM.store.isUnlocked(m.id);
           const cls = [ui && ui.id === m.id ? 'current' : '', d.done ? 'done' : '', d.done && d.firstCorrect === false ? 'missed' : ''].join(' ');
-          return `<button class="case-dot ${cls}" data-case="${m.id}" ${unlocked ? '' : 'disabled'} role="tab" aria-selected="${ui && ui.id === m.id}" title="${unlocked ? m.title : 'Terkunci: selesaikan kasus sebelumnya'}">
+          return `<button class="case-dot ${cls}" data-case="${m.id}" ${unlocked ? '' : 'disabled'} role="tab" aria-selected="${ui && ui.id === m.id}" title="${unlocked ? 'TP ' + m.tp + ': ' + m.title : 'Terkunci: selesaikan kasus sebelumnya'}">
             <span class="cd-n">${d.done ? GM.icon(d.firstCorrect ? 'check' : 'eye', 14, 3) : unlocked ? m.id : GM.icon('lock', 13)}</span>Kasus ${m.id}</button>`;
-        }).join('')}
+        }).join('') + '</div>').join('')}
       </div>`;
   }
 
@@ -47,10 +47,10 @@
     }).join('');
 
     let feedback = '';
-    if (ui.lastResult === true) feedback = `<div class="feedback ok"><div class="f-ico">${GM.icon('check', 20, 3)}</div><div><strong>${GM.FEEDBACK.ok}</strong>${d.firstCorrect ? '+20 poin masuk ke skormu.' : ui.mode === 'practice' || d.firstCorrect === false ? 'Poin hanya diberikan untuk jawaban benar pada percobaan pertama, tetapi kamu kini memahami kasusnya.' : ''}</div></div>`;
+    if (ui.lastResult === true) feedback = `<div class="feedback ok"><div class="f-ico">${GM.icon('check', 20, 3)}</div><div><strong>${GM.FEEDBACK.ok}</strong>${d.firstCorrect ? `+${GM.store.POINTS} poin masuk ke skormu.` : ui.mode === 'practice' || d.firstCorrect === false ? 'Poin hanya diberikan untuk jawaban benar pada percobaan pertama, tetapi kamu kini memahami kasusnya.' : ''}</div></div>`;
     else if (ui.lastResult === false) feedback = `<div class="feedback bad"><div class="f-ico">${GM.icon('x', 20, 3)}</div><div><strong>${GM.FEEDBACK.bad}</strong>Gunakan petunjuk, lalu tekan "Coba Lagi". Atau buka pembahasan untuk mempelajari jawabannya.</div></div>`;
     else if (reveal && d.revealed && !d.firstCorrect) feedback = `<div class="feedback info"><div class="f-ico">${GM.icon('eye', 18)}</div><div><strong>Pembahasan dibuka.</strong>Jawaban yang benar adalah ${m.answer}. Pelajari langkah-langkahnya di bawah.</div></div>`;
-    else if (reveal && d.firstCorrect) feedback = `<div class="feedback ok"><div class="f-ico">${GM.icon('check', 20, 3)}</div><div><strong>Kasus terpecahkan pada percobaan pertama.</strong>+20 poin.</div></div>`;
+    else if (reveal && d.firstCorrect) feedback = `<div class="feedback ok"><div class="f-ico">${GM.icon('check', 20, 3)}</div><div><strong>Kasus terpecahkan pada percobaan pertama.</strong>+${GM.store.POINTS} poin.</div></div>`;
 
     const hints = m.hints.slice(0, ui.hints).map((h, i) => `<div class="hint-box"><div class="hint-title">${GM.icon('bulb', 18)} Petunjuk ${i + 1}</div><div>${GM.md(h)}</div></div>`).join('');
 
@@ -81,18 +81,21 @@
       if (!last) buttons += `<button class="btn btn-primary" data-act="next">Kasus Berikutnya ${GM.icon('right', 18)}</button>`;
       buttons += `<button class="btn btn-outline" data-act="retry">${GM.icon('refresh', 18)} Coba Lagi</button>`;
     }
-    buttons += `<a class="btn btn-outline" href="#/materi/${m.topic.tab}" title="${m.topic.label}">${GM.icon('book', 18)} Kembali ke Materi</a>`;
+    const tp = GM.tpOf(m.tp);
+    buttons += `<a class="btn btn-outline" href="#/materi/${tp.tab}" title="Materi TP ${m.tp}">${GM.icon('book', 18)} Kembali ke Materi</a>`;
 
     return `<article class="card case-card" aria-labelledby="case-title">
       <div class="case-head">
         <span class="case-no">KASUS #${String(m.id).padStart(2, '0')}</span>
+        <span class="chip" style="background:rgba(255,255,255,.12);color:#fff" title="${GM.esc(GM.tpOf(m.tp).text)}">TP ${m.tp} · ${GM.stageOf(GM.tpOf(m.tp).stage).short}</span>
         <h2 id="case-title">${m.title}</h2>
         ${ui.mode === 'practice' ? '<span class="chip chip-warn" style="margin-left:auto">Mode latihan (skor tidak berubah)</span>' : ''}
       </div>
       <div class="case-body">
         <div class="case-evidence">
           <div class="story">${GM.icon('hat', 18)} ${m.story}</div>
-          <div class="figure grid-bg" id="case-fig"></div>
+          ${m.art ? '' : `<div style="margin-bottom:8px">${GM.colorToggle()}</div>`}
+          <div class="figure grid-bg" id="case-fig">${m.art ? m.art() : ''}</div>
           <div class="figure-cap">Gambar digambar sesuai perbandingan ukuran sebenarnya. Posisi atau arah bangun bisa berbeda.</div>
           <h4 style="margin-top:14px">${GM.icon('clipboard', 18)} Berkas Bukti (diketahui)</h4>
           <ul class="evidence-list">${m.given.map((g) => `<li><span>${GM.md(g)}</span></li>`).join('')}</ul>
@@ -137,7 +140,7 @@
         <button class="btn btn-danger-soft btn-sm" data-act="resetall">${GM.icon('refresh', 16)} Ulangi Investigasi dari awal</button>
       </div>
     </div>`;
-    GM.svg.mount(el.querySelector('#case-fig'), () => ({ shapes: m.figure(), opts: { label: 'Ilustrasi kasus ' + m.id, gap: 70 } }), { aspect: 0.62, maxWidth: 640 });
+    if (!m.art) GM.svg.mount(el.querySelector('#case-fig'), () => ({ shapes: m.figure(), opts: { label: 'Ilustrasi kasus ' + m.id, gap: 70, pairs: true } }), { aspect: 0.62, maxWidth: 640 });
     bind(el, m);
   }
 

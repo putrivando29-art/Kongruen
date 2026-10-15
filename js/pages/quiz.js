@@ -41,7 +41,7 @@
     const chosen = Q.answers[it.id];
     const ok = chosen === it.answer;
     return `<div class="card q-card ${done ? (ok ? 'is-correct' : 'is-wrong') : ''}" id="q-${it.id}">
-      <div class="q-head"><span class="q-num">Soal ${i + 1}</span><span class="chip diff-${it.level}">${LV[it.level]}</span><span class="chip">${it.topic}</span>
+      <div class="q-head"><span class="q-num">Soal ${i + 1}</span><span class="chip chip-navy" title="${GM.esc(GM.tpOf(it.tp).text)}">TP ${it.tp}</span><span class="chip diff-${it.level}">${LV[it.level]}</span><span class="chip">${it.topic}</span>
         ${done ? `<span class="chip ${ok ? 'chip-mint' : 'chip-bad'}" style="margin-left:auto">${ok ? 'Benar' : chosen === undefined ? 'Tidak dijawab' : 'Salah'}</span>` : ''}</div>
       <p>${GM.md(it.q)}</p>
       <div class="options">
@@ -61,7 +61,7 @@
     const v = GM.parseNum(Q.finals[it.id]);
     const ok = !isNaN(v) && Math.abs(v - it.final) < 0.01;
     return `<div class="card q-card ${done ? (ok ? 'is-correct' : 'is-wrong') : ''}" id="q-${it.id}">
-      <div class="q-head"><span class="q-num">Uraian ${i + 1}</span><span class="chip diff-${it.level}">${LV[it.level]}</span><span class="chip">${it.topic}</span>
+      <div class="q-head"><span class="q-num">Uraian ${i + 1}</span><span class="chip chip-navy" title="${GM.esc(GM.tpOf(it.tp).text)}">TP ${it.tp}</span><span class="chip diff-${it.level}">${LV[it.level]}</span><span class="chip">${it.topic}</span>
         ${done ? `<span class="chip ${ok ? 'chip-mint' : 'chip-bad'}" style="margin-left:auto">Jawaban akhir ${ok ? 'tepat' : 'belum tepat'}</span>` : ''}</div>
       <p>${GM.md(it.q)}</p>
       <label class="small muted" for="es-${it.id}">Tuliskan langkah penyelesaianmu:</label>
@@ -97,6 +97,7 @@
       ${weak.length ? `<h4>${GM.icon('bulb', 18)} Materi yang disarankan untuk dipelajari kembali</h4>
         <div class="btn-row">${weak.map((t) => `<a class="btn btn-outline btn-sm" href="#/materi/${t}">${GM.icon('book', 16)} ${tabs.find((x) => x.id === t).title}</a>`).join('')}</div>`
         : `<div class="callout mint"><p>Semua jawaban tepat. Tantang dirimu di <a href="#/lab/kongruensi">Laboratorium Geometri</a>!</p></div>`}
+      ${GM.TujuanPage.reportCard()}
       <div class="btn-row" style="margin-top:16px">
         <button class="btn btn-primary" data-q="again">${GM.icon('refresh', 18)} Ulangi Evaluasi</button>
         <a class="btn btn-outline" href="#/hasil">${GM.icon('trophy', 18)} Hasil Investigasi</a>
@@ -114,7 +115,7 @@
       <div class="page-head">
         <span class="eyebrow">${GM.icon('clipboard', 14)} Latihan dan Evaluasi</span>
         <h1>Ujian Kenaikan Pangkat Detektif</h1>
-        <p>Evaluasi ini terpisah dari Misi Detektif. Terdiri atas 10 soal pilihan ganda (skor otomatis, 10 poin per soal) dan 5 soal uraian dengan kolom jawaban. Pembahasan muncul setelah kamu mengirim jawaban. Jawaban tersimpan otomatis.</p>
+        <p>Evaluasi ini terpisah dari Misi Detektif dan mencakup TP 1 sampai TP 10 (label TP ada di setiap soal). Terdiri atas 10 soal pilihan ganda (skor otomatis, 10 poin per soal) dan 5 soal uraian dengan kolom jawaban. Pembahasan muncul setelah kamu mengirim jawaban. Jawaban tersimpan otomatis.</p>
       </div>
       ${done ? summary(Q.result) : ''}
       <div class="card quiz-bar">

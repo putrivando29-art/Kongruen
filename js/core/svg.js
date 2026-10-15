@@ -13,6 +13,9 @@
     navy: { stroke: '#17324D', fill: 'rgba(23,50,77,.08)' }
   };
   const MARK = '#EA580C';
+  // Warna pasangan seletak: sisi ke-0..3 dan sudut ke-0..3
+  const PAIR = ['#E11D48', '#7C3AED', '#0891B2', '#CA8A04'];
+  const PAIR_A = ['rgba(225,29,72,.28)', 'rgba(124,58,237,.28)', 'rgba(8,145,178,.28)', 'rgba(202,138,4,.32)'];
 
   const nrm = (v) => { const l = Math.hypot(v[0], v[1]) || 1; return [v[0] / l, v[1] / l]; };
   const f1 = (n) => Math.round(n * 10) / 10;
@@ -53,6 +56,24 @@
     const ptsAttr = sp.map((p) => p.map((v) => v.toFixed(1)).join(',')).join(' ');
     const drag = shape.draggable ? ` data-drag="body" data-shape="${idx}" class="drag-body"` : '';
     o += `<polygon points="${ptsAttr}" fill="${shape.fill || col.fill}" stroke="${col.stroke}" stroke-width="${shape.strokeWidth || 2.5}" stroke-linejoin="round" ${shape.dashed ? 'stroke-dasharray="7 6"' : ''}${drag}/>`;
+
+    // Bantuan warna (color-coding): sisi/sudut ke-i pada setiap bangun diberi warna yang sama,
+    // karena bangun digambar dengan urutan titik yang bersesuaian.
+    if (opt.pairs && shape.pair !== false) {
+      for (let i = 0; i < n; i++) {
+        const a = sp[i], b = sp[(i + 1) % n];
+        o += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${PAIR[i % PAIR.length]}" stroke-width="4.5" stroke-linecap="round" pointer-events="none"/>`;
+      }
+      for (let i = 0; i < n; i++) {
+        const v = sp[i], p = sp[(i - 1 + n) % n], q = sp[(i + 1) % n];
+        const u1 = nrm([p[0] - v[0], p[1] - v[1]]), u2 = nrm([q[0] - v[0], q[1] - v[1]]);
+        const minLen = Math.min(Math.hypot(p[0] - v[0], p[1] - v[1]), Math.hypot(q[0] - v[0], q[1] - v[1]));
+        const r = Math.max(10, Math.min(20, minLen * 0.26));
+        const sweep = u1[0] * u2[1] - u1[1] * u2[0] > 0 ? 1 : 0;
+        const a = [v[0] + u1[0] * r, v[1] + u1[1] * r], b = [v[0] + u2[0] * r, v[1] + u2[1] * r];
+        o += `<path d="M${v[0]},${v[1]} L${a[0]},${a[1]} A${r},${r} 0 0 ${sweep} ${b[0]},${b[1]} Z" fill="${PAIR_A[i % PAIR_A.length]}" pointer-events="none"/>`;
+      }
+    }
 
     // Sorotan sisi
     (shape.hlSides || []).forEach((i) => {
@@ -158,7 +179,7 @@
     if (opts.under) body += opts.under(lay.maps, lay.scale);
     shapes.forEach((sh, i) => {
       const sp = sh.pts.map(lay.maps[i]);
-      body += drawShape(sh, sp, i, { parts: opts.parts, titleY: 18 });
+      body += drawShape(sh, sp, i, { parts: opts.parts, titleY: 18, pairs: opts.pairs && GM.colorHelp() });
     });
     if (opts.extra) body += opts.extra(lay.maps, lay.scale);
     return { svg: `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${GM.esc(opts.label || 'Ilustrasi geometri')}" xmlns="http://www.w3.org/2000/svg">${body}</svg>`, lay, W, H };
@@ -191,5 +212,5 @@
     return [r.x, r.y];
   }
 
-  GM.svg = { render, mount, pointer, COLORS, f1 };
+  GM.svg = { render, mount, pointer, COLORS, f1, PAIR };
 })();
