@@ -4,6 +4,8 @@
 
 GeoMatch adalah media pembelajaran berbasis permainan untuk materi **Kekongruenan dan Kesebangunan Segitiga serta Segiempat** (kelas IX SMP). Siswa berperan sebagai detektif geometri yang memecahkan kasus dengan menganalisis panjang sisi, besar sudut, dan hubungan antarbangun.
 
+Indeks lengkap proyek dan rancangan aktivitas web: [docs/INDEKS_PROYEK.md](docs/INDEKS_PROYEK.md).
+
 ## Penyelarasan dengan Tujuan Pembelajaran
 
 Seluruh isi disusun mengikuti dokumen REVISI TP (Elemen Geometri, Fase D): 1 CP, 10 TP, 5 ATP, dalam tiga tahap.
