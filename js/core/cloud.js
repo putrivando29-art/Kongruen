@@ -36,6 +36,7 @@
     'auth/too-many-requests': 'Terlalu banyak percobaan. Tunggu beberapa menit lalu coba lagi.',
     'auth/network-request-failed': 'Tidak ada koneksi internet atau server tidak dapat dihubungi.',
     'auth/operation-not-allowed': 'Metode login Email/Password belum diaktifkan di Firebase Console.',
+    'auth/configuration-not-found': 'Firebase Authentication belum diaktifkan. Di Firebase Console buka Authentication, klik Get started, lalu aktifkan Email/Password.',
     'auth/unauthorized-domain': 'Domain website ini belum didaftarkan di Firebase (Authentication > Settings > Authorized domains).',
     'permission-denied': 'Akses ditolak oleh aturan keamanan Firestore. Periksa firestore.rules.',
     'unavailable': 'Server Firestore tidak dapat dihubungi. Periksa koneksi internet.'

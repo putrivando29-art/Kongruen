@@ -10,12 +10,12 @@
    ===================================================================== */
 window.GEOMATCH_FIREBASE = {
   config: {
-    apiKey: '',
-    authDomain: '',
-    projectId: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: ''
+    apiKey: 'AIzaSyBNMF91GJhLY7o1dRPvtnjl53VE7tqj_4M',
+    authDomain: 'geomatch-74f08.firebaseapp.com',
+    projectId: 'geomatch-74f08',
+    storageBucket: 'geomatch-74f08.firebasestorage.app',
+    messagingSenderId: '682450836814',
+    appId: '1:682450836814:web:4d2b99eb815342ef02121f'
   },
 
   // true  = siswa wajib masuk (login) sebelum membuka Misi, Evaluasi, dan Hasil.
