@@ -158,8 +158,8 @@ Firebase hanya mengizinkan login dari domain yang terdaftar.
 1. Buka **Authentication** > tab **Settings** > **Authorized domains**.
 2. Klik **Add domain**.
 3. Masukkan domain website saja, tanpa `https://` dan tanpa bagian `/#/...`. Contoh Netlify: `geomatch-smpn1.netlify.app`. Contoh Vercel: untuk alamat `https://kongruen-omega.vercel.app/#/beranda`, isi `kongruen-omega.vercel.app`. Jika memakai domain sendiri, tambahkan juga domain tersebut.
-5. Khusus Vercel: setiap deployment juga punya alamat pratinjau yang berbeda (berakhiran `.vercel.app`). Login hanya berfungsi di alamat yang didaftarkan, jadi bagikan dan uji alamat utama (misalnya `kongruen-omega.vercel.app`) kepada siswa.
 4. Klik **Add**. Domain `localhost` biasanya sudah ada secara bawaan untuk uji coba di komputer.
+5. Khusus Vercel: setiap deployment juga punya alamat pratinjau yang berbeda (berakhiran `.vercel.app`). Login hanya berfungsi di alamat yang didaftarkan, jadi bagikan dan uji alamat utama (misalnya `kongruen-omega.vercel.app`) kepada siswa.
 
 Jika langkah ini terlewat, siswa akan melihat pesan: "Domain website ini belum didaftarkan di Firebase".
 
