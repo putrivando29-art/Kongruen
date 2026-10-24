@@ -7,7 +7,7 @@ Tutorial ini menjelaskan cara mengaktifkan login siswa, penyimpanan hasil penger
 | Layanan | Firebase dari Google: **Authentication** (login) dan **Cloud Firestore** (database) |
 | Biaya | Paket gratis (Spark) cukup untuk satu atau beberapa kelas; lihat bagian 13 |
 | Waktu penyiapan | Sekitar 30-60 menit untuk pertama kali |
-| Yang dibutuhkan | Akun Google, akses ke repositori GitHub GeoMatch, situs Netlify (opsional tetapi disarankan) |
+| Yang dibutuhkan | Akun Google, akses ke repositori GitHub GeoMatch, situs yang sudah online (Netlify atau Vercel) |
 | Berkas yang diubah | Hanya `js/firebase-config.js` |
 | Berkas aturan keamanan | `firestore.rules` (disalin ke Firebase Console) |
 
@@ -145,19 +145,20 @@ window.GEOMATCH_FIREBASE = {
 | `requireLogin` | `false` | Login boleh dilewati; hasil siswa yang tidak login tidak terkirim ke guru |
 | `useEmulator` | `false` | Wajib `false` untuk website online |
 
-4. Simpan perubahan (di GitHub: **Commit changes**). Jika situs Netlify terhubung ke repositori, Netlify akan memperbarui situs otomatis dalam 1-2 menit.
+4. Simpan perubahan (di GitHub: **Commit changes**). Jika situs Netlify atau Vercel terhubung ke repositori, situs akan diperbarui otomatis dalam 1-2 menit. Di Vercel, pantau di menu **Deployments** sampai status deployment terbaru **Ready**.
 
 Selama `apiKey` dan `projectId` masih kosong, website tetap berjalan seperti sebelumnya tanpa login.
 
 ---
 
-## 8. Mendaftarkan Domain Netlify di Firebase
+## 8. Mendaftarkan Domain Website di Firebase
 
 Firebase hanya mengizinkan login dari domain yang terdaftar.
 
 1. Buka **Authentication** > tab **Settings** > **Authorized domains**.
 2. Klik **Add domain**.
-3. Masukkan domain Netlify tanpa `https://`, misalnya `geomatch-smpn1.netlify.app`. Jika memakai domain sendiri, tambahkan juga domain tersebut.
+3. Masukkan domain website saja, tanpa `https://` dan tanpa bagian `/#/...`. Contoh Netlify: `geomatch-smpn1.netlify.app`. Contoh Vercel: untuk alamat `https://kongruen-omega.vercel.app/#/beranda`, isi `kongruen-omega.vercel.app`. Jika memakai domain sendiri, tambahkan juga domain tersebut.
+5. Khusus Vercel: setiap deployment juga punya alamat pratinjau yang berbeda (berakhiran `.vercel.app`). Login hanya berfungsi di alamat yang didaftarkan, jadi bagikan dan uji alamat utama (misalnya `kongruen-omega.vercel.app`) kepada siswa.
 4. Klik **Add**. Domain `localhost` biasanya sudah ada secara bawaan untuk uji coba di komputer.
 
 Jika langkah ini terlewat, siswa akan melihat pesan: "Domain website ini belum didaftarkan di Firebase".
@@ -191,7 +192,7 @@ Untuk mencabut akses guru, hapus dokumen `teachers/<UID>` tersebut.
 
 ## 10. Uji Coba Sebelum Dipakai di Kelas
 
-Lakukan urutan berikut di situs Netlify:
+Lakukan urutan berikut di situs yang sudah online (Netlify atau Vercel):
 
 1. **Siswa mendaftar:** buka situs, klik **Masuk** di kanan atas > tab **Daftar Siswa**. Isi nama, kelas (contoh `IX A`), email, dan kata sandi. Setelah berhasil, siswa diarahkan ke Misi Detektif.
 2. **Siswa mengerjakan:** jawab satu kasus. Titik kecil di samping nama siswa pada navbar berubah hijau, artinya progres sudah tersimpan di server.
@@ -257,7 +258,7 @@ Perkiraan pemakaian GeoMatch (perkiraan, bukan hasil pengukuran di kelas nyata):
 |---|---|---|
 | Halaman Masuk menampilkan "Login belum diaktifkan" | `js/firebase-config.js` masih kosong atau belum ter-deploy | Isi konfigurasi (langkah 7), tunggu Netlify selesai deploy, muat ulang dengan Ctrl+F5 |
 | "Metode login Email/Password belum diaktifkan" | Langkah 4 terlewat | Aktifkan Email/Password di Authentication |
-| "Domain website ini belum didaftarkan di Firebase" | Langkah 8 terlewat | Tambahkan domain Netlify ke Authorized domains |
+| "Domain website ini belum didaftarkan di Firebase" | Langkah 8 terlewat, atau siswa membuka alamat pratinjau Vercel | Tambahkan domain website (misalnya `kongruen-omega.vercel.app`) ke Authorized domains, dan pakai alamat utama |
 | "Akses ditolak oleh aturan keamanan Firestore" | Aturan belum dipasang atau tidak lengkap | Ulangi langkah 6 dengan menyalin seluruh `firestore.rules` |
 | Guru diarahkan keluar dengan pesan "belum terdaftar sebagai guru" | Dokumen `teachers` belum ada atau Document ID bukan UID guru | Periksa langkah 9B: nama koleksi `teachers`, Document ID = User UID |
 | "Email atau kata sandi salah" | Salah ketik | Periksa kembali atau gunakan Lupa kata sandi |
