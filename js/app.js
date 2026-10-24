@@ -9,8 +9,12 @@
     lab: { page: () => GM.LabPage, title: 'Laboratorium Geometri' },
     misi: { page: () => GM.MissionGame, title: 'Misi Detektif' },
     evaluasi: { page: () => GM.QuizPage, title: 'Evaluasi' },
-    hasil: { page: () => GM.ResultPage, title: 'Hasil Investigasi' }
+    hasil: { page: () => GM.ResultPage, title: 'Hasil Investigasi' },
+    masuk: { page: () => GM.LoginPage, title: 'Masuk' },
+    guru: { page: () => GM.TeacherPage, title: 'Dasbor Guru' }
   };
+  // Halaman yang mewajibkan login bila Firebase aktif dan requireLogin = true
+  const PROTECTED = ['misi', 'evaluasi', 'hasil'];
   let current = null;
   let lastKey = '';
 
@@ -23,8 +27,19 @@
     GM.clearResize();
     current = ROUTES[name].page();
     GM.Navbar.setActive(name);
+    const c = GM.cloud;
     try {
-      current.render(app, parts.slice(1));
+      if (c && c.requireLogin && PROTECTED.includes(name) && !c.user) {
+        if (!c.resolved) {
+          app.innerHTML = `<div class="container page"><div class="card center"><p>${GM.icon('clock', 18)} Memeriksa status akun ...</p></div></div>`;
+        } else {
+          GM.LoginPage.rememberTarget(location.hash);
+          current = GM.LoginPage;
+          current.render(app, []);
+        }
+      } else {
+        current.render(app, parts.slice(1));
+      }
     } catch (e) {
       console.error(e);
       app.innerHTML = `<div class="container page"><div class="card"><h2>Terjadi kesalahan</h2><p>Halaman tidak dapat dimuat. Coba muat ulang halaman.</p><a class="btn btn-primary" href="#/beranda">Kembali ke Beranda</a></div></div>`;
@@ -38,6 +53,8 @@
   function start() {
     GM.Navbar.mount(document.getElementById('navbar'));
     window.addEventListener('hashchange', route);
+    // Muat ulang halaman saat status login berubah (masuk/keluar/peran dimuat).
+    if (GM.cloud && GM.cloud.enabled) GM.cloud.onChange((type) => { if (type === 'auth') route(); });
     if (!location.hash) history.replaceState(null, '', '#/beranda');
     route();
     if (!GM.store.storageOk) GM.toast('Penyimpanan tidak tersedia', 'Progres hanya bertahan selama halaman terbuka.', 'lock');

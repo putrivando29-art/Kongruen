@@ -62,11 +62,11 @@
   };
 
   // Ringkasan capaian per TP dari misi (percobaan pertama), evaluasi, dan latihan.
-  GM.tpReport = function () {
-    const st = GM.store.get();
+  GM.tpReport = function (st) {
+    st = st || GM.store.get();
     const q = st.quiz && st.quiz.submitted ? st.quiz.result : null;
     return GM.CURRICULUM.tps.map((tp) => {
-      const m = st.missions[tp.mission] || {};
+      const m = (st.missions || {})[tp.mission] || {};
       const items = q ? q.mc.concat(q.es).filter((x) => tp.quiz.includes(x.id)) : [];
       const qOk = items.filter((x) => x.ok).length;
       const practice = (st.practice || {})[tp.n] || 0;
@@ -76,7 +76,7 @@
         const quizOk = !items.length || qOk === items.length;
         status = missionOk && quizOk ? 'tercapai' : 'penguatan';
       }
-      return { tp, mission: m.firstCorrect, quiz: items.length ? `${qOk}/${items.length}` : null, practice, status, visited: !!st.material[tp.tab] };
+      return { tp, mission: m.firstCorrect, quiz: items.length ? `${qOk}/${items.length}` : null, practice, status, visited: !!(st.material || {})[tp.tab] };
     });
   };
 

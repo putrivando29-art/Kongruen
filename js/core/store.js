@@ -50,10 +50,12 @@
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { storageOk = false; }
   }
 
-  function missionStats() {
+  // st opsional: dipakai dasbor guru untuk menghitung progres siswa lain.
+  function missionStats(st) {
+    st = st || state;
     let completed = 0, correct = 0, wrong = 0;
     for (let i = 1; i <= MISSION_COUNT; i++) {
-      const m = state.missions[i];
+      const m = (st.missions || {})[i];
       if (!m) continue;
       if (m.done) completed++;
       if (m.firstCorrect === true) correct++;
@@ -105,6 +107,19 @@
       state = defaults();
       save();
       subs.forEach((cb) => cb(state));
+    },
+    // Mengganti seluruh progres (dipakai saat memuat progres dari Firebase).
+    replace(data) {
+      const d = defaults();
+      state = Object.assign(d, data || {});
+      state.quiz = Object.assign(defaults().quiz, (data && data.quiz) || {});
+      state.settings = Object.assign(defaults().settings, (data && data.settings) || {});
+      save();
+      subs.forEach((cb) => cb(state));
+    },
+    // Apakah progres masih kosong (belum ada aktivitas berarti)?
+    isEmpty() {
+      return !Object.keys(state.missions).length && !Object.keys(state.material).length && !Object.keys(state.quiz.answers || {}).length && !state.quiz.submitted;
     }
   };
 

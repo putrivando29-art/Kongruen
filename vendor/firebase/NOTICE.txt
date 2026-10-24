@@ -1,0 +1,3 @@
+Firebase JavaScript SDK 10.14.1 (berkas *-compat.js), dari paket npm "firebase".
+Lisensi: Apache License 2.0 - https://www.apache.org/licenses/LICENSE-2.0
+Sumber: https://github.com/firebase/firebase-js-sdk

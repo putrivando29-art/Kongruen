@@ -41,6 +41,8 @@ GeoMatch menempatkan siswa sebagai detektif di sebuah laboratorium geometri. Sis
 | 6 | Misi Detektif | `#/misi/:kasus` | 10 kasus (satu per TP) |
 | 7 | Evaluasi | `#/evaluasi` | 10 pilihan ganda + 5 uraian |
 | 8 | Hasil | `#/hasil` | Laporan akhir investigasi dan capaian per TP |
+| 9 | Masuk | `#/masuk` | Daftar/masuk siswa, masuk guru, lupa kata sandi (jika Firebase aktif) |
+| 10 | Dasbor Guru | `#/guru` | Rekap seluruh siswa, filter kelas, capaian per TP, rincian dan jawaban uraian, unduh CSV |
 
 ---
 
@@ -125,6 +127,7 @@ Setelah dikirim: kunci, pembahasan, ringkasan hasil per tingkat kesulitan, rekom
 | Bantuan warna (color-coding) | Sisi dan sudut seletak diberi warna sama; dapat dinyalakan/dimatikan (pembelajaran berdiferensiasi) |
 | Latihan Seletak | Generator soal acak untuk TP 5-8: notasi, ukuran, dan posisi bangun berubah setiap soal |
 | Progres tersimpan | Skor, kasus, badge, materi yang dibuka, latihan, dan jawaban evaluasi tersimpan di localStorage (`geomatch.progress.v2`) |
+| Login dan Dasbor Guru | Firebase Authentication + Cloud Firestore; progres siswa tersinkron otomatis, guru memantau semua siswa. Panduan: `docs/TUTORIAL_FIREBASE.md` |
 | Capaian per TP | Dihitung dari jawaban pertama kasus misi dan soal evaluasi terkait; bersifat indikasi, bukan penilaian resmi |
 | Responsif | Dapat dibuka di laptop dan smartphone (diuji pada lebar 390 px sampai 1366 px) |
 | Rumus | Ditampilkan dengan KaTeX yang disimpan lokal |
@@ -141,6 +144,10 @@ assets/favicon.svg          Ikon situs
 vendor/katex/               KaTeX 0.16.11 (lisensi MIT)
 js/core/ui.js               Format angka, rumus, ikon, toast, modal, bantuan warna
 js/core/store.js            Penyimpanan progres, skor, badge
+js/core/cloud.js            Login Firebase dan sinkronisasi progres
+js/firebase-config.js       Konfigurasi Firebase
+firestore.rules             Aturan keamanan Firestore
+vendor/firebase/            Firebase JS SDK 10.14.1
 js/core/geo.js              Perhitungan geometri dan pencocokan bangun
 js/core/svg.js              Penggambar bangun SVG berskala
 js/data/curriculum.js       CP, TP, ATP, pemetaan TP, capaian per TP
@@ -148,9 +155,10 @@ js/data/missions.js         10 kasus misi
 js/data/quiz.js             Soal evaluasi
 js/components/navbar.js     Navigasi
 js/components/practice.js   Generator Latihan Seletak
-js/pages/*.js               Beranda, Tujuan, Petunjuk, Materi, Laboratorium, Misi, Evaluasi, Hasil
+js/pages/*.js               Beranda, Tujuan, Petunjuk, Materi, Laboratorium, Misi, Evaluasi, Hasil, Masuk, Dasbor Guru
 js/app.js                   Router berbasis hash
 docs/INDEKS_PROYEK.md       Dokumen ini
+docs/TUTORIAL_FIREBASE.md   Tutorial login dan dasbor guru
 ```
 
 ---
@@ -169,14 +177,14 @@ Beranda -> Tujuan & Petunjuk -> Materi (TP) -> Laboratorium -> Misi (kasus TP) -
 
 | Tahap | Aktivitas siswa di website | Peran guru | Bukti belajar |
 |---|---|---|---|
-| **Orientasi** | Membuka Beranda, membaca Tujuan dan Petunjuk | Menjelaskan TP dan aturan permainan | Siswa mengetahui TP dan sistem skor |
+| **Orientasi** | Mendaftar akun (jika login aktif), membuka Beranda, membaca Tujuan dan Petunjuk | Menjelaskan TP dan aturan permainan, memastikan semua siswa berhasil masuk | Siswa mengetahui TP dan sistem skor; nama siswa muncul di Dasbor Guru |
 | **Tahap 1: Memahami konsep (TP 1-4)** | Membaca masalah pemantik, eksplorasi karton virtual (geser, putar, cermin sampai berimpit), eksplorasi pembesaran foto, mengklik kartu SSS/SAS/ASA/AAS/RHS, mencoba alat periksa SSS sebanding, lalu mengerjakan Kasus 1-4 | Memandu langkah saintifik (mengamati, menanya, mengumpulkan informasi, menalar, mengomunikasikan) dan meminta siswa menyampaikan syarat yang ditemukan | Status "Tepat berimpit", jawaban Kasus 1-4 |
 | **Tahap 2: Menentukan ukuran (TP 5-8)** | Membaca langkah unsur seletak, mempelajari contoh, mengerjakan Latihan Seletak dengan bantuan warna lalu tanpa bantuan warna, mencoba Thales, garis tinggi, dan GeoGebra, lalu mengerjakan Kasus 5-8 | Membimbing inkuiri, memberi bantuan berbeda sesuai kebutuhan siswa (warna, petunjuk, langkah penyelesaian) | Jumlah latihan benar per TP, jawaban Kasus 5-8 |
 | **Tahap 3: Memecahkan masalah (TP 9-10)** | Menyelesaikan masalah kontekstual (sungai, kuda-kuda, layang-layang, bayangan, cermin), mengerjakan Kasus 9-10, melakukan Proyek Mini pengukuran di sekolah dan menyalin laporannya | Membentuk kelompok, mendampingi pengukuran, memfasilitasi presentasi dan evaluasi kesalahan pengukuran | Laporan Proyek Mini, jawaban Kasus 9-10 |
-| **Evaluasi dan refleksi** | Mengerjakan Evaluasi (timer opsional), membaca pembahasan, membuka halaman Hasil dan capaian per TP, mempelajari ulang materi yang direkomendasikan | Membahas soal yang banyak salah, menindaklanjuti TP berstatus "Perlu penguatan" | Skor PG, jawaban uraian, tabel capaian per TP |
+| **Evaluasi dan refleksi** | Mengerjakan Evaluasi (timer opsional), membaca pembahasan, membuka halaman Hasil dan capaian per TP, mempelajari ulang materi yang direkomendasikan | Memantau Dasbor Guru, menilai jawaban uraian, membahas soal yang banyak salah, menindaklanjuti TP berstatus "Perlu penguatan" | Skor PG, jawaban uraian, tabel capaian per TP |
 
 ### Catatan pelaksanaan
 
-- Progres tersimpan di perangkat masing-masing; siswa sebaiknya memakai perangkat yang sama selama rangkaian kegiatan.
+- Tanpa login, progres tersimpan di perangkat masing-masing. Dengan login Firebase aktif, progres mengikuti akun siswa sehingga dapat dilanjutkan di perangkat lain dan dipantau guru.
 - Media GeoGebra memerlukan koneksi internet; fitur lain tetap berjalan tanpa CDN karena KaTeX disimpan lokal.
 - Status capaian per TP hanya indikasi awal dari sedikit butir soal dan perlu dilengkapi penilaian guru, terutama untuk jawaban uraian dan laporan proyek.

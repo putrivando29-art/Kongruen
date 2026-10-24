@@ -6,6 +6,8 @@ GeoMatch adalah media pembelajaran berbasis permainan untuk materi **Kekongruena
 
 Indeks lengkap proyek dan rancangan aktivitas web: [docs/INDEKS_PROYEK.md](docs/INDEKS_PROYEK.md).
 
+Login siswa, penyimpanan hasil di server, dan Dasbor Guru (Firebase): ikuti [docs/TUTORIAL_FIREBASE.md](docs/TUTORIAL_FIREBASE.md). Tanpa konfigurasi Firebase, website tetap berjalan tanpa login.
+
 ## Penyelarasan dengan Tujuan Pembelajaran
 
 Seluruh isi disusun mengikuti dokumen REVISI TP (Elemen Geometri, Fase D): 1 CP, 10 TP, 5 ATP, dalam tiga tahap.
@@ -30,8 +32,10 @@ Pemetaan TP ke materi, kasus misi, dan soal evaluasi ada di `js/data/curriculum.
 | Misi Detektif (`#/misi/:kasus`) | 10 kasus (satu per TP), 10 poin per kasus, petunjuk, umpan balik, pembahasan bertahap, badge |
 | Evaluasi (`#/evaluasi`) | 10 PG + 5 uraian berlabel TP, tingkat mudah/sedang/sulit, timer opsional, pembahasan, capaian per TP |
 | Hasil (`#/hasil`) | Skor akhir, benar/salah, persentase, badge, rekomendasi, capaian per TP |
+| Masuk (`#/masuk`) | Daftar/masuk siswa, masuk guru, lupa kata sandi (aktif jika Firebase dikonfigurasi) |
+| Dasbor Guru (`#/guru`) | Rekap semua siswa, filter kelas, capaian per TP, rincian per siswa termasuk jawaban uraian, unduh CSV |
 
-Progres disimpan di `localStorage` (kunci `geomatch.progress.v2`).
+Progres disimpan di `localStorage` (kunci `geomatch.progress.v2`). Jika Firebase aktif, progres siswa yang login juga disimpan ke Cloud Firestore (`progress/{uid}`).
 
 Catatan: Media GeoGebra dimuat dari `https://www.geogebra.org/apps/deployggb.js` saat tombol "Muat GeoGebra" ditekan, sehingga membutuhkan internet. Jika gagal dimuat, halaman menampilkan petunjuk membuat konstruksi yang sama secara manual di geogebra.org.
 
@@ -47,12 +51,16 @@ Catatan: Media GeoGebra dimuat dari `https://www.geogebra.org/apps/deployggb.js`
 index.html
 netlify.toml
 css/style.css
-js/core/        ui.js (format, ikon, toast), store.js (localStorage), geo.js (geometri), svg.js (renderer)
+js/firebase-config.js  konfigurasi Firebase (diisi sendiri)
+js/core/        ui.js (format, ikon, toast), store.js (localStorage), cloud.js (Firebase), geo.js (geometri), svg.js (renderer)
 js/data/        curriculum.js (CP/TP/ATP), missions.js (10 kasus), quiz.js (soal evaluasi)
 js/components/  navbar.js, practice.js (generator Latihan Seletak)
-js/pages/       home.js, tujuan.js, guide.js, material.js, lab.js, mission.js, quiz.js, result.js
+js/pages/       home.js, tujuan.js, guide.js, material.js, lab.js, mission.js, quiz.js, result.js, login.js, teacher.js
+firestore.rules aturan keamanan Firestore
+firebase.json   konfigurasi Firebase CLI/emulator
 js/app.js       router berbasis hash
 vendor/katex/   KaTeX
+vendor/firebase/ Firebase JS SDK 10.14.1 (compat)
 ```
 
 ## Menjalankan secara lokal
